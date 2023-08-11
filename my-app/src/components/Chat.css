@@ -1,0 +1,9 @@
+.chat {
+    width: 65%;
+    height: 150vh;
+}
+
+.chat div {
+    position: sticky;
+    bottom: 0;
+}

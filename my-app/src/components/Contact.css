@@ -1,0 +1,32 @@
+.contact {
+    margin: 10px;
+    padding: 4px;
+    display: flex;
+    transition: all 0.2s;
+    border-radius: 3px;
+}
+
+.contact:hover{
+    background-color: rgb(39 39 39);
+}
+
+.contact img {
+    width: 55px;
+    border-radius: 100px;
+}
+
+.contact-detail{
+    margin: 0 10px;
+    width: 100%;
+}
+
+.name-text {
+    font-weight: bolder;
+}
+.about-text {
+    color: #a2a2a2;
+}
+.contact-detail hr {
+    position: relative;
+    top: 8px;
+}
