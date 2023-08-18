@@ -1,37 +1,55 @@
-.form-container {
-    height: 78.5%;
-}
-
-.signIn {
+form {
     display: flex;
-    height: 107px;
-    padding: 13px 98px;
-    border: 1px solid grey;
-    border-radius: 6px;
-    box-shadow: 0px 0px 20px 0px #0c0c0c;
     flex-direction: column;
     align-items: center;
-    justify-content: space-around;
+    justify-content: center;
+    background-color: #13222c;
 }
 
-.signIn input {
-    border: 0.5px solid #3c3c3c;
-    padding: 4px 6px;
-    background: #181818;
+.signin {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    border: 1px solid #393939;
+    border-radius: 7px;
+    background: #0e2d3d;
+    padding: 7px 34px;
+    width: 270px;
+    box-shadow: 0px 0px 3px black;
+}
+
+.signin label {
+    margin: 4px 0;
+}
+
+.signin input {
+    width: 260px;
+    height: 25px;
     border-radius: 4px;
+    border: 1.5px solid grey;
+    color: black;
 }
 
-.signIn input {
-    /* background-color: blue; */
-}
-
-.signIn button {
-    border: 0.5px solid #3c3c3c;
-    padding: 6px 12px;
-    background: #111b21;
+.signin button {
+    margin-top: 30px;
+    width: 267px;
+    height: 30px;
     border-radius: 4px;
+    border: 1.5px solid grey;
+    background-color: #7dd9c2;
 }
 
-.signIn button:hover {
-    background-color: blue;
+.create-button {
+    margin: 29px 0;
+    width: 333px;
+    height: 30px;
+    border-radius: 4px;
+    border: 1.5px solid grey;
+    background-color: #6caffe;
+    color: black;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
