@@ -2,7 +2,6 @@ import React from 'react'
 import './Contact.css'
 
 export default function Contact(props) {
-  console.log(props.contact)
   return (
     <div className='contact'>
       <img src={props.contact.profilePic} alt='' />

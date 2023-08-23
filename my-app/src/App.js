@@ -1,5 +1,5 @@
 import ContactsList from './components/ContactsList';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './App.css';
 import {
   BrowserRouter as Router,
@@ -31,6 +31,7 @@ import {
   getDownloadURL,
   uploadBytesResumable
 } from "firebase/storage";
+import DialogueBox from './components/DialogueBox';
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -55,7 +56,10 @@ function App() {
   const auth = getAuth(app)
   const db = getDatabase(app);
   const storage = getStorage(app);
-
+  const [userId, setUserId] = useState(null)
+  const [name, setName] = useState(null)
+  const [savedContacts, setSavedContacts] = useState([])
+  console.log(savedContacts)
   const showLoginError = (error) => {
     document.getElementById('loginpassword').style.border = '1.5px solid red'
     if (error.code === AuthErrorCodes.INVALID_PASSWORD) {
@@ -90,7 +94,6 @@ function App() {
     const signinPassword = document.getElementById('loginpassword').value
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, signinEmail, signinPassword)
-
       set(databaseRef(db, 'users/' + userCredential.user.uid), {
         name: signinName,
         email: signinEmail
@@ -108,31 +111,53 @@ function App() {
       showLoginError(error);
     }
   }
-  const [userUid, setUserUid] = useState(null)
   const monitorAuthState = async () => {
     onAuthStateChanged(auth, user => {
       if (user) {
-        setUserUid(user.uid)
-        // console.log(user)
+        setUserId(user.uid)
         setSignIn(true);
+        console.log('hellow')
         get(databaseRef(db, 'users/' + user.uid)).then((snapshot) => {
+          setName(snapshot.val().name)
+          setSavedContacts(snapshot.val().contacts.userId)
         }).catch((error) => {
-
           console.error(error);
         });
+
       } else {
-        setUserUid(null)
-        setSignIn(false);
+        setUserId(null)
+        setName(null)
+        setSignIn(false)
 
         console.log('You are not Logged in.')
       }
     })
   }
-  monitorAuthState();
+
+  useEffect(() => {
+    monitorAuthState();
+  }, []); // Empty dependency array ensures this effect runs once when the component mounts
 
   const logout = async () => {
     await signOut(auth);
   }
+
+  const addContact = async (event) => {
+    event.preventDefault();
+    const newContact = document.getElementById('addUserId').value;
+
+    // Update the state with the new contact
+
+    console.log(newContact); // Logging the new contact
+
+    // Now update the database with the new contact list
+    const updatedContacts = [...savedContacts, newContact]; // Use the updated savedContacts array
+    set(databaseRef(db, 'users/' + userId + '/contacts'), {
+      userId: updatedContacts
+    });
+    window.location.href = '/';
+  };
+
 
   return (
     <Router>
@@ -151,6 +176,9 @@ function App() {
         } />
         <Route exact path="/signUp" element={
           <SignIn purpose={'Sign up'} account={createAccount} />
+        } />
+        <Route exact path="/addUser" element={
+          <DialogueBox addContact={addContact} />
         } />
       </Routes>
     </Router>

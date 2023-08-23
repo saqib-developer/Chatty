@@ -35,10 +35,17 @@ input {
   color: white;
   text-decoration: none;
   border: none;
-  background-color: rgb(30, 25, 82);
 }
 
 a:hover,
 button:hover {
   cursor: pointer;
+}
+
+button{
+  background-color: black;
+}
+
+input{
+  color: black;
 }
