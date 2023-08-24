@@ -32,6 +32,7 @@ import {
 } from "firebase/storage";
 import DialogueBox from './components/DialogueBox';
 import Contact from './components/Contact';
+import ShareContact from './components/ShareContact';
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -165,6 +166,7 @@ function App() {
 
   useEffect(() => {
     monitorAuthState();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
 
@@ -239,7 +241,6 @@ function App() {
                 <Contact profilePic={data.profileImg} name={data.name} about={data.about} />
               </React.Fragment>
             ))}
-
           </div>
         } />
         <Route exact path="/signIn" element={
@@ -250,6 +251,9 @@ function App() {
         } />
         <Route exact path="/addUser" element={
           <DialogueBox addContact={addContact} />
+        } />
+        <Route exact path="/sharecontact" element={
+          <ShareContact userId={userId} />
         } />
       </Routes>
     </Router>

@@ -1,0 +1,14 @@
+.shareContact {
+    margin: 0 40%;
+}
+
+.qr-container {
+    display: flex;
+    background-color: #0e438b ;
+    padding: 30px 35px;
+    width: fit-content;
+    margin: 29px 10px;
+    border-radius: 4px;
+    flex-direction: column;
+    align-items: center;
+}
