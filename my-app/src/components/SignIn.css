@@ -19,8 +19,21 @@ form {
     box-shadow: 0px 0px 3px black;
 }
 
+.signin img {
+    border-radius: 151px;
+    width: 136px;
+}
+
+.file{
+    cursor: pointer;
+}
+
+#select-file{
+    display: none;
+}
+
 .signin label {
-    margin: 4px 0;
+    margin: 8px auto;
 }
 
 .signin input {

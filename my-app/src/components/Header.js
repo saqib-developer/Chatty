@@ -10,7 +10,7 @@ export default function Header(props) {
         <Link to={'/addUser'}>Add Contact</Link>
         <button>Share</button>
         {props.signIn ? <span><button onClick={props.logout}>Log out</button></span> : <Link to={'/signIn'}>Sign In</Link>}
-        <img className='per-logo' src="img/saqib.jpg" alt="" />
+        {props.signIn && props.profilePic ? <img className='per-logo' src={props.profilePic} alt="" /> : <img className='per-logo' src="img/default-profile-img.png" alt="" />}
       </div>
 
       <div className='anim'></div>

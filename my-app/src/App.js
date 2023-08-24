@@ -57,7 +57,9 @@ function App() {
   const db = getDatabase(app);
   const storage = getStorage(app);
   const [userId, setUserId] = useState(null)
+  const [profilePic, setProfilePic] = useState(null)
   const [name, setName] = useState(null)
+  const [about, setAbout] = useState(null)
   const [savedContacts, setSavedContacts] = useState([])
   const [contactsData, setContactsData] = useState([])
 
@@ -91,54 +93,80 @@ function App() {
 
   const createAccount = async (event) => {
     event.preventDefault();
-    const signinName = document.getElementById('loginname').value
-    const signinEmail = document.getElementById('loginemail').value
-    const signinPassword = document.getElementById('loginpassword').value
-    try {
-      const userCredential = await createUserWithEmailAndPassword(auth, signinEmail, signinPassword)
-      set(databaseRef(db, 'users/' + userCredential.user.uid), {
-        name: signinName,
-        email: signinEmail
-      })
-        .then(() => {
-          console.log('User data successfully saved')
-        })
-        .catch((error) => {
-          console.log('error: ' + error)
-        });
 
+    // Get form values
+    const profileImg = document.getElementById('select-file').files[0];
+    const signinName = document.getElementById('loginname').value;
+    const about = document.getElementById('about').value;
+    const signinEmail = document.getElementById('loginemail').value;
+    const signinPassword = document.getElementById('loginpassword').value;
+
+    try {
+      if (!profileImg || !signinName || !signinEmail || !signinPassword) {
+        throw new Error("Please fill in all required fields.");
+      }
+
+      const userCredential = await createUserWithEmailAndPassword(auth, signinEmail, signinPassword);
+
+      const metadata = { contentType: profileImg.type };
+      const imgRef = storageRef(storage, `Profile Images/${userCredential.user.uid}/${profileImg.name}`);
+      const downloadURL = await uploadBytesResumable(imgRef, profileImg, metadata).then(() => getDownloadURL(imgRef));
+
+      await set(databaseRef(db, 'users/' + userCredential.user.uid), {
+        name: signinName,
+        about: about,
+        profileImg: downloadURL,
+        email: signinEmail
+      });
+
+      console.log('User data successfully saved');
       window.location.href = '/';
     } catch (error) {
-      console.log(error);
-      showLoginError(error);
+      console.error(error);
+      showLoginError(error.message || "An error occurred.");
     }
-  }
+  };
+
   const monitorAuthState = async () => {
     onAuthStateChanged(auth, user => {
       if (user) {
-        setUserId(user.uid)
-        setSignIn(true);
-        console.log('hellow')
-        get(databaseRef(db, 'users/' + user.uid)).then((snapshot) => {
-          setName(snapshot.val().name)
-          setSavedContacts(snapshot.val().contacts.userId)
-        }).catch((error) => {
-          console.error(error);
-        });
-
+        handleAuthenticatedUser(user);
       } else {
-        setUserId(null)
-        setName(null)
-        setSignIn(false)
-
-        console.log('You are not Logged in.')
+        handleUnauthenticatedUser();
       }
-    })
-  }
+    });
+  };
+
+  const handleAuthenticatedUser = async (user) => {
+    setUserId(user.uid);
+    setSignIn(true);
+
+    try {
+      const snapshot = await get(databaseRef(db, 'users/' + user.uid));
+      const userVal = snapshot.val();
+
+      if (userVal) {
+        setProfilePic(userVal.profileImg);
+        setName(userVal.name);
+        setAbout(userVal.about);
+        setSavedContacts(userVal.contacts.userId);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleUnauthenticatedUser = () => {
+    setUserId(null);
+    setName(null);
+    setSignIn(false);
+    console.log('You are not logged in.');
+  };
 
   useEffect(() => {
     monitorAuthState();
-  }, []); // Empty dependency array ensures this effect runs once when the component mounts
+  }, []);
+
 
   useEffect(() => {
     const fetchContacts = async () => {
@@ -202,15 +230,15 @@ function App() {
 
   return (
     <Router>
-      <Header signIn={signIn} logout={logout} />
+      <Header signIn={signIn} logout={logout} profilePic={profilePic} />
       <Routes>
         <Route exact path="/" element={
           <div className='app'>
             {contactsData && contactsData.map((data, index) => (
-                <React.Fragment key={index}>
-                  <Contact name={data.name} />
-                </React.Fragment>
-              ))}
+              <React.Fragment key={index}>
+                <Contact profilePic={data.profileImg} name={data.name} about={data.about} />
+              </React.Fragment>
+            ))}
 
           </div>
         } />
