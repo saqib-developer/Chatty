@@ -3,7 +3,8 @@ import './App.css';
 import {
   BrowserRouter as Router,
   Routes,
-  Route
+  Route,
+  Link
 } from "react-router-dom";
 import Header from './components/Header';
 import SignIn from './components/SignIn';
@@ -22,7 +23,9 @@ import {
   getDatabase,
   ref as databaseRef,
   get,
-  set
+  set,
+  serverTimestamp,
+  onValue
 } from 'firebase/database';
 import {
   getStorage,
@@ -33,6 +36,7 @@ import {
 import DialogueBox from './components/DialogueBox';
 import Contact from './components/Contact';
 import ShareContact from './components/ShareContact';
+import Chat from './components/Chat';
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -50,13 +54,12 @@ const firebaseConfig = {
 };
 
 function App() {
-  const [signIn, setSignIn] = useState(false);
 
-  // Initialize Firebase
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app)
   const db = getDatabase(app);
   const storage = getStorage(app);
+  const [signIn, setSignIn] = useState(false);
   const [userId, setUserId] = useState(null)
   const [profilePic, setProfilePic] = useState(null)
   const [name, setName] = useState(null)
@@ -64,7 +67,6 @@ function App() {
   const [savedContacts, setSavedContacts] = useState([])
   const [contactsData, setContactsData] = useState([])
 
-  console.log(contactsData)
   const showLoginError = (error) => {
     document.getElementById('loginpassword').style.border = '1.5px solid red'
     if (error.code === AuthErrorCodes.INVALID_PASSWORD) {
@@ -117,7 +119,8 @@ function App() {
         name: signinName,
         about: about,
         profileImg: downloadURL,
-        email: signinEmail
+        email: signinEmail,
+        Id: userCredential.user.uid
       });
 
       console.log('User data successfully saved');
@@ -192,7 +195,7 @@ function App() {
     if (savedContacts.length > 0) {
       fetchContacts(); // Fetch contacts when savedContacts change
     }
-  }, [db, savedContacts]); // Empty dependency array ensures this effect runs once when the component mounts
+  }, [db, savedContacts]);
 
   const logout = async () => {
     await signOut(auth);
@@ -229,6 +232,43 @@ function App() {
     }
   };
 
+  const retrieveMsg = (receiverId) => {
+    return new Promise((resolve) => {
+      onValue(databaseRef(db, `users/${userId}/messages/${receiverId}`), (snapshot) => {
+        const messages = [];
+        snapshot.forEach((childSnapshot) => {
+          const messageData = childSnapshot.val();
+          
+          messages.push({
+            sentby: messageData.sentby,
+            message: messageData.message,
+            timestamp: messageData.timestamp
+          });
+        });
+        
+        
+        console.log(messages)
+        // console.log("All Messages:", messages);
+        resolve(messages); // Resolve the promise with the messages
+      });
+    });
+  };
+
+  const sendMsg = async (receiverId, msg) => {
+    set(databaseRef(db, `users/${userId}/messages/${receiverId}/${Date.now()}`), {
+      message: msg,
+      sentby: userId,
+      timestamp: serverTimestamp() // You can still use serverTimestamp() here
+    });
+
+    set(databaseRef(db, `users/${receiverId}/messages/${userId}/${Date.now()}`), {
+      message: msg,
+      sentby: userId,
+      timestamp: serverTimestamp()
+    });
+  };
+
+
 
   return (
     <Router>
@@ -238,7 +278,7 @@ function App() {
           <div className='app'>
             {contactsData && contactsData.map((data, index) => (
               <React.Fragment key={index}>
-                <Contact profilePic={data.profileImg} name={data.name} about={data.about} />
+                <Link to={data.Id}><Contact profilePic={data.profileImg} name={data.name} about={data.about} /></Link>
               </React.Fragment>
             ))}
           </div>
@@ -255,6 +295,15 @@ function App() {
         <Route exact path="/sharecontact" element={
           <ShareContact userId={userId} />
         } />
+
+        {contactsData && contactsData.map((data, index) => (
+          <React.Fragment key={index}>
+            <Route exact path={data.Id} element={
+              <Chat senderId={userId} receiverId={data.Id} profilePic={data.profileImg} name={data.name} about={data.about} sendMsg={sendMsg} retrieveMsg={retrieveMsg} />
+            } />
+          </React.Fragment>
+        ))}
+
       </Routes>
     </Router>
   );

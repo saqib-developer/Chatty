@@ -79,9 +79,7 @@
 }
 
 .per-logo-container span {
-    transform: translateX(-100vw);
     margin: 10px;
-    animation: move 3.5s ease-in-out 4.85s normal forwards;
     z-index: 1;
 }
 
