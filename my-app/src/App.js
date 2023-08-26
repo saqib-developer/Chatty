@@ -82,6 +82,8 @@ function App() {
 
   const loginEmailPassword = async (event) => {
     event.preventDefault();
+    setIsButtonDisabled(true)
+
     const signinEmail = document.getElementById('loginemail').value
     const signinPassword = document.getElementById('loginpassword').value
     try {
@@ -89,6 +91,7 @@ function App() {
       console.log(userCredential.user)
       window.location.href = '/';
     } catch (error) {
+      setIsButtonDisabled(false)
       console.log(error);
       showLoginError(error);
     }
@@ -102,7 +105,7 @@ function App() {
 
   const createAccount = async (event) => {
     event.preventDefault();
-    setIsButtonDisabled(true)
+    setIsButtonDisabled(true);
 
     // Get form values
     const profileImg = document.getElementById('select-file').files[0];
@@ -132,6 +135,7 @@ function App() {
 
       console.log('User data successfully saved');
       window.location.href = '/';
+
     } catch (error) {
       setIsButtonDisabled(false)
       console.error(error);
@@ -242,13 +246,15 @@ function App() {
   };
 
   const sendMsg = async (receiverId, msg) => {
-    set(databaseRef(db, `users/${userId}/messages/${receiverId}/${Date.now()}`), {
+    // Sender
+    await set(databaseRef(db, `users/${userId}/messages/${receiverId}/${Date.now()}`), {
       message: msg,
       sentby: userId,
-      timestamp: serverTimestamp() // You can still use serverTimestamp() here
+      timestamp: serverTimestamp()
     });
 
-    set(databaseRef(db, `users/${receiverId}/messages/${userId}/${Date.now()}`), {
+    // Receiver
+    await set(databaseRef(db, `users/${receiverId}/messages/${userId}/${Date.now()}`), {
       message: msg,
       sentby: userId,
       timestamp: serverTimestamp()
@@ -268,13 +274,21 @@ function App() {
                   <Link to={data.Id}><Contact profilePic={data.profileImg} name={data.name} about={data.about} /></Link>
                 </React.Fragment>
               ))
-              : <div style={{
-                textAlign: 'center',
-                fontSize: 'xx-large',
-                margin: '29px 0'
-              }}>
-                <Link style={{color: '#4242d3'}} to={'/addUser'}>Add Contacts</Link> to view them here
-              </div>
+              : signIn ?
+                <div style={{
+                  textAlign: 'center',
+                  fontSize: 'xx-large',
+                  margin: '29px 0'
+                }}>
+                  <Link style={{ color: '#4242d3' }} to={'/addUser'}>Add Contacts</Link> to view them here
+                </div> :
+                <div style={{
+                  textAlign: 'center',
+                  fontSize: 'xx-large',
+                  margin: '29px 0'
+                }}>
+                  <Link style={{ color: '#4242d3' }} to={'/signIn'}>SignIn</Link> to View your Contacts
+                </div>
             }
           </div>
         } />
@@ -285,10 +299,26 @@ function App() {
           <SignIn isButtonDisabled={isButtonDisabled} purpose={'Sign up'} account={createAccount} />
         } />
         <Route exact path="/addUser" element={
-          <DialogueBox addContact={addContact} />
+          signIn ?
+            <DialogueBox addContact={addContact} /> :
+            <div style={{
+              textAlign: 'center',
+              fontSize: 'xx-large',
+              margin: '29px 0'
+            }}>
+              <Link style={{ color: '#4242d3' }} to={'/signIn'}>SignIn</Link> to View your Contacts
+            </div>
         } />
         <Route exact path="/sharecontact" element={
-          <ShareContact userId={userId} />
+          signIn ?
+            <ShareContact userId={userId} /> :
+            <div style={{
+              textAlign: 'center',
+              fontSize: 'xx-large',
+              margin: '29px 0'
+            }}>
+              <Link style={{ color: '#4242d3' }} to={'/signIn'}>SignIn</Link> to View your Contacts
+            </div>
         } />
 
         {contactsData && contactsData.map((data, index) => (
