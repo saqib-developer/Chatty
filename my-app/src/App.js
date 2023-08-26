@@ -281,13 +281,13 @@ function App() {
                   <Link to={data.Id}><Contact profilePic={data.profileImg} name={data.name} about={data.about} /></Link>
                 </React.Fragment>
               ))
-              : signIn ?
-                <div className='watermark'>
-                  <span><Link style={{ color: '#4242d3' }} to={'/addUser'}>Add Contacts</Link> to view them here</span>
-                </div> :
-                <div className='watermark'>
-                  <span><Link style={{ color: '#4242d3' }} to={'/signIn'}>Signin</Link> to View your Contacts</span>
-                </div>
+              : <div style={{
+                textAlign: 'center',
+                fontSize: 'xx-large',
+                margin: '29px 0'
+              }}>
+                <Link style={{color: '#4242d3'}} to={'/addUser'}>Add Contacts</Link> to view them here
+              </div>
             }
           </div>
         } />
@@ -298,18 +298,10 @@ function App() {
           <SignIn isButtonDisabled={isButtonDisabled} purpose={'Sign up'} account={createAccount} />
         } />
         <Route exact path="/addUser" element={
-          signIn ?
-            <DialogueBox addContact={addContact} /> :
-            <div className='watermark'>
-              <span><Link style={{ color: '#4242d3' }} to={'/signIn'}>Signin</Link> to View your Contacts</span>
-            </div>
+          <DialogueBox addContact={addContact} />
         } />
         <Route exact path="/sharecontact" element={
-          signIn ?
-            <ShareContact userId={userId} /> :
-            <div className='watermark'>
-              <span><Link style={{ color: '#4242d3' }} to={'/signIn'}>Signin</Link> to View your Contacts</span>
-            </div>
+          <ShareContact userId={userId} />
         } />
 
         {contactsData && contactsData.map((data, index) => (
