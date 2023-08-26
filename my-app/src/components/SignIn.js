@@ -49,7 +49,7 @@ export default function SignIn(props) {
 
                 <span style={{ color: 'red' }} id="showError"></span>
 
-                <button type='submit'>Continue</button>
+                <button id='submitbtn' disabled={props.isButtonDisabled} type='submit'>Continue</button>
             </div>
             {
                 props.purpose === 'Sign in' ?

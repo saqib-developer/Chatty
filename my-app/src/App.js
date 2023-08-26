@@ -24,8 +24,7 @@ import {
   ref as databaseRef,
   get,
   set,
-  serverTimestamp,
-  onValue
+  serverTimestamp
 } from 'firebase/database';
 import {
   getStorage,
@@ -66,6 +65,7 @@ function App() {
   const [about, setAbout] = useState(null)
   const [savedContacts, setSavedContacts] = useState([])
   const [contactsData, setContactsData] = useState([])
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false)
 
   const showLoginError = (error) => {
     document.getElementById('loginpassword').style.border = '1.5px solid red'
@@ -94,8 +94,15 @@ function App() {
     }
   }
 
+  if (isButtonDisabled) {
+    document.getElementById('submitbtn').style.background = 'grey'
+    document.getElementById('submitbtn').style.cursor = 'no-drop'
+
+  }
+
   const createAccount = async (event) => {
     event.preventDefault();
+    setIsButtonDisabled(true)
 
     // Get form values
     const profileImg = document.getElementById('select-file').files[0];
@@ -126,6 +133,7 @@ function App() {
       console.log('User data successfully saved');
       window.location.href = '/';
     } catch (error) {
+      setIsButtonDisabled(false)
       console.error(error);
       showLoginError(error.message || "An error occurred.");
     }
@@ -199,6 +207,7 @@ function App() {
 
   const logout = async () => {
     await signOut(auth);
+    window.location.href = '/';
   }
 
   const addContact = async (event) => {
@@ -232,28 +241,6 @@ function App() {
     }
   };
 
-  const retrieveMsg = (receiverId) => {
-    return new Promise((resolve) => {
-      onValue(databaseRef(db, `users/${userId}/messages/${receiverId}`), (snapshot) => {
-        const messages = [];
-        snapshot.forEach((childSnapshot) => {
-          const messageData = childSnapshot.val();
-          
-          messages.push({
-            sentby: messageData.sentby,
-            message: messageData.message,
-            timestamp: messageData.timestamp
-          });
-        });
-        
-        
-        console.log(messages)
-        // console.log("All Messages:", messages);
-        resolve(messages); // Resolve the promise with the messages
-      });
-    });
-  };
-
   const sendMsg = async (receiverId, msg) => {
     set(databaseRef(db, `users/${userId}/messages/${receiverId}/${Date.now()}`), {
       message: msg,
@@ -269,25 +256,33 @@ function App() {
   };
 
 
-
   return (
     <Router>
       <Header signIn={signIn} logout={logout} profilePic={profilePic} />
       <Routes>
         <Route exact path="/" element={
           <div className='app'>
-            {contactsData && contactsData.map((data, index) => (
-              <React.Fragment key={index}>
-                <Link to={data.Id}><Contact profilePic={data.profileImg} name={data.name} about={data.about} /></Link>
-              </React.Fragment>
-            ))}
+            {contactsData.length > 0 ?
+              contactsData && contactsData.map((data, index) => (
+                <React.Fragment key={index}>
+                  <Link to={data.Id}><Contact profilePic={data.profileImg} name={data.name} about={data.about} /></Link>
+                </React.Fragment>
+              ))
+              : <div style={{
+                textAlign: 'center',
+                fontSize: 'xx-large',
+                margin: '29px 0'
+              }}>
+                <Link style={{color: '#4242d3'}} to={'/addUser'}>Add Contacts</Link> to view them here
+              </div>
+            }
           </div>
         } />
         <Route exact path="/signIn" element={
-          <SignIn purpose={'Sign in'} account={loginEmailPassword} />
+          <SignIn isButtonDisabled={isButtonDisabled} purpose={'Sign in'} account={loginEmailPassword} />
         } />
         <Route exact path="/signUp" element={
-          <SignIn purpose={'Sign up'} account={createAccount} />
+          <SignIn isButtonDisabled={isButtonDisabled} purpose={'Sign up'} account={createAccount} />
         } />
         <Route exact path="/addUser" element={
           <DialogueBox addContact={addContact} />
@@ -299,7 +294,7 @@ function App() {
         {contactsData && contactsData.map((data, index) => (
           <React.Fragment key={index}>
             <Route exact path={data.Id} element={
-              <Chat senderId={userId} receiverId={data.Id} profilePic={data.profileImg} name={data.name} about={data.about} sendMsg={sendMsg} retrieveMsg={retrieveMsg} />
+              <Chat db={db} senderId={userId} receiverId={data.Id} profilePic={data.profileImg} name={data.name} about={data.about} sendMsg={sendMsg} />
             } />
           </React.Fragment>
         ))}

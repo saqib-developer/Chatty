@@ -27,6 +27,7 @@
 .chat-container {
     height: 273px;
     overflow-y: scroll;
+    word-wrap: break-word
 }
 
 .mine {
@@ -59,6 +60,12 @@
     position: sticky;
     bottom: 0;
     background-color: #0026ff42;
+}
+
+.timestamp {
+    font-size: xx-small;
+    margin: 0 0 0 8px !important;
+    padding: 0 !important;
 }
 
 .chat-input input {

@@ -1,30 +1,52 @@
 import React, { useState, useEffect } from 'react';
 import './Chat.css';
+import { ref as databaseRef, onValue } from 'firebase/database';
 
 export default function Chat(props) {
     const [messages, setMessages] = useState([]);
+    const chatsRef = React.useRef(null); // Create a ref to hold the chats container
 
     useEffect(() => {
-        // Fetch messages when the component mounts
-        props.retrieveMsg(props.receiverId).then((fetchedMessages) => {
-            setMessages(fetchedMessages);
-        });
-    }, [props, props.receiverId, props.retrieveMsg]);
+        const updateMessages = (snapshot) => {
+            const updatedMessages = [];
+            snapshot.forEach((childSnapshot) => {
+                const messageData = childSnapshot.val();
+                updatedMessages.push({
+                    sentby: messageData.sentby,
+                    message: messageData.message,
+                    timestamp: messageData.timestamp,
+                });
+            });
 
-    const manageMsg = (event) => {
-        event.preventDefault();
-        const msgInput = document.getElementById('msg');
-        props.sendMsg(props.receiverId, msgInput.value);
-        msgInput.value = ''; // Clear the input field
-    };
+            setMessages(updatedMessages);
+        };
 
-    const arrange = (sentby) => {
-        if (props.senderId === sentby) {
-            return 'mine';
-        } else {
-            return 'other';
+        const unsubscribe = onValue(databaseRef(props.db, `users/${props.senderId}/messages/${props.receiverId}`), updateMessages);
+
+        // Clean up the subscription when the component unmounts
+        return () => unsubscribe();
+    }, [props.db, props.receiverId, props.senderId]);
+
+    useEffect(() => {
+        // Scroll to the bottom when messages update
+        if (chatsRef.current) {
+            chatsRef.current.scrollTop = chatsRef.current.scrollHeight;
         }
+    }, [messages]);
+
+    const manageMsg = async (event) => {
+        event.preventDefault();
+        await props.sendMsg(props.receiverId, document.getElementById('msg').value);
+        document.getElementById('msg').value = ''; // Clear the input field
     };
+
+    function formatTimestamp(timestamp) {
+        const date = new Date(timestamp);
+        const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+        return date.toLocaleDateString(undefined, options);
+    }
+
+    const arrange = (sentby) => (props.senderId === sentby) ? 'mine' : 'other';
 
     return (
         <div className='chat'>
@@ -37,10 +59,16 @@ export default function Chat(props) {
                 </div>
             </div>
             <div className="chats">
-                <div className="chat-container">
+                <div ref={chatsRef} className="chat-container">
                     {messages.map((data, index) => (
                         <div key={index} className={arrange(data.sentby)}>
-                            <span>{data.message}</span>
+                            <span>
+                                {data.message}
+                                <span className="timestamp">
+                                    {formatTimestamp(data.timestamp)}
+                                </span>
+                            </span>
+
                         </div>
                     ))}
                 </div>
