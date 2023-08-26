@@ -82,6 +82,8 @@ function App() {
 
   const loginEmailPassword = async (event) => {
     event.preventDefault();
+    setIsButtonDisabled(true)
+
     const signinEmail = document.getElementById('loginemail').value
     const signinPassword = document.getElementById('loginpassword').value
     try {
@@ -89,6 +91,7 @@ function App() {
       console.log(userCredential.user)
       window.location.href = '/';
     } catch (error) {
+      setIsButtonDisabled(false)
       console.log(error);
       showLoginError(error);
     }
@@ -102,7 +105,7 @@ function App() {
 
   const createAccount = async (event) => {
     event.preventDefault();
-    setIsButtonDisabled(true)
+    setIsButtonDisabled(true);
 
     // Get form values
     const profileImg = document.getElementById('select-file').files[0];
@@ -132,6 +135,7 @@ function App() {
 
       console.log('User data successfully saved');
       window.location.href = '/';
+
     } catch (error) {
       setIsButtonDisabled(false)
       console.error(error);
@@ -215,40 +219,49 @@ function App() {
     const newContact = document.getElementById('addUserId').value;
 
     try {
+      if (newContact === userId) {
+        throw new Error("You cannot add yourself as a contact.");
+      }
+
       const snapshot = await get(databaseRef(db, 'users/' + newContact));
       if (snapshot.exists()) {
-        console.log('Data exists at the specified path.');
-        // Update the state with the new contact
+        const existingContactsSnapshot = await get(databaseRef(db, 'users/' + userId + '/contacts'));
+        const existingContacts = existingContactsSnapshot.val() || {};
 
-        console.log(newContact); // Logging the new contact
+        if (Object.keys(existingContacts).includes(newContact)) {
+          throw new Error("Contact already exists in your list.");
+        }
 
         // Now update the database with the new contact list
-        const updatedContacts = [...savedContacts, newContact]; // Use the updated savedContacts array
-        set(databaseRef(db, 'users/' + userId + '/contacts'), {
-          userId: updatedContacts
-        });
-        window.location.href = '/';
+        const updatedContacts = { ...existingContacts, [newContact]: true };
+        await set(databaseRef(db, 'users/' + userId + '/contacts'), updatedContacts);
 
+        console.log('Contact added successfully');
+        window.location.href = '/';
       } else {
-        console.log('Data does not exist at the specified path.');
-        document.getElementById('addUserId').style.border = '1.5px solid red'
+        console.log('Data does not exist at the specified path');
+        document.getElementById('addUserId').style.border = '1.5px solid red';
         setTimeout(() => {
-          document.getElementById('addUserId').style.border = '1.5px solid #404040'
+          document.getElementById('addUserId').style.border = '1.5px solid #404040';
         }, 3000);
       }
     } catch (error) {
-      console.error('Error while checking data existence:', error);
+      console.error('Error while adding contact:', error);
     }
   };
 
+
+
   const sendMsg = async (receiverId, msg) => {
-    set(databaseRef(db, `users/${userId}/messages/${receiverId}/${Date.now()}`), {
+    // Sender
+    await set(databaseRef(db, `users/${userId}/messages/${receiverId}/${Date.now()}`), {
       message: msg,
       sentby: userId,
-      timestamp: serverTimestamp() // You can still use serverTimestamp() here
+      timestamp: serverTimestamp()
     });
 
-    set(databaseRef(db, `users/${receiverId}/messages/${userId}/${Date.now()}`), {
+    // Receiver
+    await set(databaseRef(db, `users/${receiverId}/messages/${userId}/${Date.now()}`), {
       message: msg,
       sentby: userId,
       timestamp: serverTimestamp()
@@ -258,7 +271,7 @@ function App() {
 
   return (
     <Router>
-      <Header signIn={signIn} logout={logout} profilePic={profilePic} />
+      <Header name={name} about={about} signIn={signIn} logout={logout} profilePic={profilePic} />
       <Routes>
         <Route exact path="/" element={
           <div className='app'>
@@ -268,13 +281,13 @@ function App() {
                   <Link to={data.Id}><Contact profilePic={data.profileImg} name={data.name} about={data.about} /></Link>
                 </React.Fragment>
               ))
-              : <div style={{
-                textAlign: 'center',
-                fontSize: 'xx-large',
-                margin: '29px 0'
-              }}>
-                <Link style={{color: '#4242d3'}} to={'/addUser'}>Add Contacts</Link> to view them here
-              </div>
+              : signIn ?
+                <div className='watermark'>
+                  <span><Link style={{ color: '#4242d3' }} to={'/addUser'}>Add Contacts</Link> to view them here</span>
+                </div> :
+                <div className='watermark'>
+                  <span><Link style={{ color: '#4242d3' }} to={'/signIn'}>Signin</Link> to View your Contacts</span>
+                </div>
             }
           </div>
         } />
@@ -285,10 +298,18 @@ function App() {
           <SignIn isButtonDisabled={isButtonDisabled} purpose={'Sign up'} account={createAccount} />
         } />
         <Route exact path="/addUser" element={
-          <DialogueBox addContact={addContact} />
+          signIn ?
+            <DialogueBox addContact={addContact} /> :
+            <div className='watermark'>
+              <span><Link style={{ color: '#4242d3' }} to={'/signIn'}>Signin</Link> to View your Contacts</span>
+            </div>
         } />
         <Route exact path="/sharecontact" element={
-          <ShareContact userId={userId} />
+          signIn ?
+            <ShareContact userId={userId} /> :
+            <div className='watermark'>
+              <span><Link style={{ color: '#4242d3' }} to={'/signIn'}>Signin</Link> to View your Contacts</span>
+            </div>
         } />
 
         {contactsData && contactsData.map((data, index) => (

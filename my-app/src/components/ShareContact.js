@@ -1,5 +1,5 @@
 import React from 'react';
-import QRCode from 'qrcode.react';
+// import QRCode from 'qrcode.react';
 import './ShareContact.css'
 
 export default function ShareContact(props) {
@@ -8,7 +8,7 @@ export default function ShareContact(props) {
         <div className='shareContact'>
             <div className="qr-container">
                 <h2>Scan the QR code</h2>
-                <QRCode value={props.userId} />
+                {/* <QRCode value={props.userId} /> */}
                 <p>Your Id: {props.userId}</p>
             </div>
         </div>

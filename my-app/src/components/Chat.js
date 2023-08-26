@@ -35,9 +35,10 @@ export default function Chat(props) {
     }, [messages]);
 
     const manageMsg = async (event) => {
+        const msg = document.getElementById('msg').value;
+        document.getElementById('msg').value = '';
         event.preventDefault();
-        await props.sendMsg(props.receiverId, document.getElementById('msg').value);
-        document.getElementById('msg').value = ''; // Clear the input field
+        await props.sendMsg(props.receiverId, msg);
     };
 
     function formatTimestamp(timestamp) {
@@ -49,31 +50,32 @@ export default function Chat(props) {
     const arrange = (sentby) => (props.senderId === sentby) ? 'mine' : 'other';
 
     return (
-        <div className='chat'>
+        <div className='info-msg-container'>
             <div className="contact-info">
-                <img src={props.profilePic} alt="" />
-                <span>{props.name}</span>
+                <div className="reciever-profilePic"><img src={props.profilePic} alt="" /></div>
+                <span className='reciever-name'>{props.name}</span>
+                <hr />
                 <div className='about-container'>
                     <span>About: {props.about}</span>
-                    <hr />
                 </div>
             </div>
             <div className="chats">
                 <div ref={chatsRef} className="chat-container">
-                    {messages.map((data, index) => (
-                        <div key={index} className={arrange(data.sentby)}>
-                            <span>
-                                {data.message}
-                                <span className="timestamp">
-                                    {formatTimestamp(data.timestamp)}
+                    {messages.length !== 0 ?
+                        messages.map((data, index) => (
+                            <div key={index} className={arrange(data.sentby)}>
+                                <span>
+                                    {data.message}
+                                    <span className="timestamp">
+                                        {formatTimestamp(data.timestamp)}
+                                    </span>
                                 </span>
-                            </span>
 
-                        </div>
-                    ))}
+                            </div>
+                        )) : <div className='watermark'><span>Break The Ice</span></div>}
                 </div>
                 <form onSubmit={manageMsg} className="chat-input">
-                    <input type="text" id='msg' />
+                    <input required type="text" id='msg' />
                     <button type="submit">Send</button>
                 </form>
             </div>
