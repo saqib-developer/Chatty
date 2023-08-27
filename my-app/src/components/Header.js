@@ -11,13 +11,17 @@ export default function Header(props) {
       <div className='header-link-container'>
         <Link to={'/addUser'}><span>Add Contact</span></Link>
         <Link to={'/sharecontact'}><span>Share your<br />Contact</span></Link>
-        {props.signIn ? <button style={{ color: 'red', borderColor: 'red' }} onClick={props.logout}><span>Log out</span></button> : <Link to={'/signIn'}><span>Sign In</span ></Link>}
+        {props.signIn ?
+          <button style={{ color: 'red', borderColor: 'red' }} onClick={props.logout}><span>Log out</span></button>
+          :
+          <Link style={{ color: '#26ff57', borderColor: '#26ff57' }} to={'/signIn'}><span>Sign In</span ></Link>
+        }
         <div className="per-logo">
           {props.signIn && props.profilePic ?
             <img
               src={props.profilePic}
               alt=""
-              style={{cursor: 'pointer'}}
+              style={{ cursor: 'pointer' }}
               title={`Name: ${props.name}\nAbout: ${props.about}`}
             />
             :

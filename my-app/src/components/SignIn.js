@@ -17,6 +17,20 @@ export default function SignIn(props) {
             reader.readAsDataURL(file);
         }
     }
+
+    try {
+
+        if (props.isButtonDisabled) {
+            document.getElementById('submitbtn').style.background = 'grey';
+            document.getElementById('submitbtn').style.cursor = 'no-drop';
+        } else {
+            document.getElementById('submitbtn').style.background = '#7dd9c2';
+            document.getElementById('submitbtn').style.cursor = 'pointer';
+        }
+    } catch (error) {
+        console.error(error)
+    }
+
     return (
         <form onSubmit={props.account} id='login'>
             <div className="signin">
@@ -30,7 +44,7 @@ export default function SignIn(props) {
                             <label htmlFor="select-file" className='file'>
                                 {imgSrc ? <img src={imgSrc} alt="" /> : <img src="img/default-profile-img.png" alt="" />}
                             </label>
-                            <input onChange={selectImage} type="file" accept='image/*' id='select-file' />
+                            <input required onChange={selectImage} type="file" accept='image/*' id='select-file' />
                             <b><label htmlFor="loginname">Name:</label></b>
                             <input id='loginname' required type="text" />
                             <br />
@@ -47,7 +61,7 @@ export default function SignIn(props) {
                 <b><label htmlFor="password">Password:</label></b>
                 <input id='loginpassword' required autoComplete='current-password' type="password" />
 
-                <span style={{ color: 'red' }} id="showError"></span>
+                <span style={{ color: 'red' }} id="showError" className='error-display'></span>
 
                 <button id='submitbtn' disabled={props.isButtonDisabled} type='submit'>Continue</button>
             </div>

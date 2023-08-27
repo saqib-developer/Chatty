@@ -17,7 +17,7 @@
     border: 0.5px solid grey;
 }
 
-.box input{
+.box input {
     border: 1.5px solid #404040;
     border-radius: 3px;
     padding: 3px 4px;
@@ -25,7 +25,14 @@
     width: 272px;
 }
 
-.box button{
+.error-display {
+    color: red;
+    height: 16px;
+    margin: 5px 0;
+}
+
+.box button,
+.box a {
     background-color: #007cff;
     margin: 0 29px;
     padding: 6px 17px;

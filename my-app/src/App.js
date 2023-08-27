@@ -66,18 +66,16 @@ function App() {
   const [savedContacts, setSavedContacts] = useState([])
   const [contactsData, setContactsData] = useState([])
   const [isButtonDisabled, setIsButtonDisabled] = useState(false)
+  const [addUserButtonDisabled, setAddUserButtonDisabled] = useState(false)
 
-  const showLoginError = (error) => {
-    document.getElementById('loginpassword').style.border = '1.5px solid red'
-    if (error.code === AuthErrorCodes.INVALID_PASSWORD) {
-      document.getElementById('showError').innerHTML = 'Wrong Password. Try again'
-    } else {
-      document.getElementById('showError').innerHTML = `Error: ${error.message}`
-    }
+
+  const showError = (borderId, spanId, error) => {
+    document.getElementById(borderId).style.border = '1.5px solid red'
+    document.getElementById(spanId).textContent = error
     setTimeout(() => {
-      document.getElementById('showError').innerHTML = '';
-      document.getElementById('loginpassword').style.border = '1.5px solid grey'
-    }, 6000);
+      document.getElementById(borderId).style.border = '1.5px solid grey'
+      document.getElementById(spanId).textContent = ''
+    }, 3000);
   }
 
   const loginEmailPassword = async (event) => {
@@ -93,15 +91,14 @@ function App() {
     } catch (error) {
       setIsButtonDisabled(false)
       console.log(error);
-      showLoginError(error);
+      if (error.code === AuthErrorCodes.INVALID_PASSWORD) {
+        showError('loginpassword', 'showError', error.code)
+      } else {
+        showError('loginemail', 'showError', error.code)
+      }
     }
   }
 
-  if (isButtonDisabled) {
-    document.getElementById('submitbtn').style.background = 'grey'
-    document.getElementById('submitbtn').style.cursor = 'no-drop'
-
-  }
 
   const createAccount = async (event) => {
     event.preventDefault();
@@ -139,7 +136,7 @@ function App() {
     } catch (error) {
       setIsButtonDisabled(false)
       console.error(error);
-      showLoginError(error.message || "An error occurred.");
+      showError('loginemail', 'showError', error.message || "An error occurred.");
     }
   };
 
@@ -219,6 +216,7 @@ function App() {
   }
 
   const addContact = async (event) => {
+    setAddUserButtonDisabled(true)
     event.preventDefault();
     const newContact = document.getElementById('addUserId').value;
 
@@ -226,7 +224,8 @@ function App() {
       const snapshot = await get(databaseRef(db, 'users/' + newContact));
 
       if (newContact === userId) {
-        
+        showError('addUserId', 'error-display', 'You cannot add your own Contact')
+        setAddUserButtonDisabled(false)
         throw new Error("You cannot add yourself as a contact.");
       }
 
@@ -235,6 +234,8 @@ function App() {
         const existingContacts = existingContactsSnapshot.val() || {};
 
         if (Object.keys(existingContacts).includes(newContact)) {
+          showError('addUserId', 'error-display', 'Contact already exists in your list')
+          setAddUserButtonDisabled(false)
           throw new Error("Contact already exists in your list.");
         }
 
@@ -245,6 +246,8 @@ function App() {
         console.log('Contact added successfully');
         window.location.href = '/';
       } else {
+        showError('addUserId', 'error-display', 'There is no Contact with that Id')
+        setAddUserButtonDisabled(false)
         console.log('Data does not exist at the specified path');
         document.getElementById('addUserId').style.border = '1.5px solid red';
         setTimeout(() => {
@@ -252,6 +255,7 @@ function App() {
         }, 3000);
       }
     } catch (error) {
+      setAddUserButtonDisabled(false)
       console.error('Error while adding contact:', error);
     }
   };
@@ -307,7 +311,7 @@ function App() {
           <SignIn isButtonDisabled={isButtonDisabled} purpose={'Sign up'} account={createAccount} />
         } />
         <Route exact path="/addUser" element={
-          <DialogueBox signIn={signIn} addContact={addContact} />
+          <DialogueBox addUserButtonDisabled={addUserButtonDisabled} signIn={signIn} addContact={addContact} />
         } />
         <Route exact path="/sharecontact" element={
           <ShareContact signIn={signIn} userId={userId} />

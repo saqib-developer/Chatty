@@ -78,7 +78,7 @@
 .simple-watermark {
     height: 100%;
     min-height: 250px;
-    font-size: 4em;
+    font-size: 3em;
     color: #999999;
     display: flex;
     justify-content: center;
@@ -88,7 +88,7 @@
 .watermark {
     height: 100%;
     min-height: 312px;
-    font-size: 4em;
+    font-size: 3em;
     color: #80808038;
     display: flex;
     justify-content: center;
