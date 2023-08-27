@@ -48,13 +48,13 @@ export default function SignIn(props) {
                             <span>
                                 <b><label htmlFor="loginname">Name:</label></b>
                                 <br />
-                                <input id='loginname' required type="text" />
+                                <input id='loginname' required type="text" autoComplete='name' />
                             </span>
                             <br />
                             <span>
                                 <b><label htmlFor="about">About:</label></b>
                                 <br />
-                                <input id='about' required type="text" />
+                                <input autoComplete='none' id='about' required type="text" />
                             </span>
                             <br />
                         </>

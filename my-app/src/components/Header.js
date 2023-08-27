@@ -26,8 +26,6 @@ export default function Header(props) {
     }
   }
 
-  // if (screenWidth < 600) { setShow(false) }
-
   return (
     <div className="header" id='header'>
       <div className="header-container">
@@ -35,7 +33,7 @@ export default function Header(props) {
           <img src="img/logo/chatty-logo-nobg-round.jpg" alt="" />
         </button>
         <div className='header-link-container'>
-          {screenWidth > 600 ?
+          {screenWidth > 650 ?
             <>
               <Link to={'/addUser'}><span>Add Contact</span></Link>
               <Link to={'/sharecontact'}><span>Share your<br />Contact</span></Link>
@@ -48,7 +46,9 @@ export default function Header(props) {
                 {props.signIn && props.profilePic ?
                   <img src={props.profilePic} alt="" style={{ cursor: 'pointer' }} title={`Name: ${props.name}\nAbout: ${props.about}`} />
                   :
-                  <img src="img/default-profile-img.png" alt="" />}
+                  <img src="img/default-profile-img.png" style={{ cursor: 'pointer' }} alt="" title={`Login to view to view your data here`} />
+
+                }
               </div>
             </>
             :
@@ -59,7 +59,7 @@ export default function Header(props) {
                 </button>
                 :
                 <button onClick={showOptions}>
-                  <img src="img/default-profile-img.png" alt="" />
+                  <img src="img/default-profile-img.png" style={{ cursor: 'pointer' }} alt="" title={`Login to view to view your data here`} />
                 </button>
               }
             </div>
