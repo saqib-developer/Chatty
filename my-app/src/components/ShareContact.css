@@ -1,14 +1,18 @@
-.shareContact {
-    margin: 0 40%;
+.share-contact {
+    background-color: #0d2b3d;
+    height: 77.68%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.qr-container {
+.box {
+    background: #06394e;
     display: flex;
-    background-color: #0e438b ;
-    padding: 30px 35px;
-    width: fit-content;
-    margin: 29px 10px;
-    border-radius: 4px;
     flex-direction: column;
     align-items: center;
+    padding: 28px 58px;
+    box-shadow: 0 0 13px 0 black;
+    border-radius: 8px;
+    border: 0.5px solid grey;
 }

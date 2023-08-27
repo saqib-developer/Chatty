@@ -75,7 +75,7 @@ export default function Chat(props) {
                         )) : <div className='watermark'><span>Break The Ice</span></div>}
                 </div>
                 <form onSubmit={manageMsg} className="chat-input">
-                    <input required type="text" id='msg' />
+                    <input required type="text" id='msg' autocomplete="off"/>
                     <button type="submit">Send</button>
                 </form>
             </div>

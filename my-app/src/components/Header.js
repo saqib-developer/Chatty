@@ -9,7 +9,6 @@ export default function Header(props) {
         <img src="img/logo/chatty-logo-nobg-round.jpg" alt="" />
       </button>
       <div className='header-link-container'>
-        <Link to={'/editdetails'}><span>Edit your<br />Details</span></Link>
         <Link to={'/addUser'}><span>Add Contact</span></Link>
         <Link to={'/sharecontact'}><span>Share your<br />Contact</span></Link>
         {props.signIn ? <button style={{ color: 'red', borderColor: 'red' }} onClick={props.logout}><span>Log out</span></button> : <Link to={'/signIn'}><span>Sign In</span ></Link>}

@@ -204,8 +204,12 @@ function App() {
       }
     };
 
-    if (savedContacts.length > 0) {
-      fetchContacts(); // Fetch contacts when savedContacts change
+    try {
+      if (savedContacts.length > 0) {
+        fetchContacts(); // Fetch contacts when savedContacts change
+      }
+    } catch (error) {
+      console.log('Error: ' + error)
     }
   }, [db, savedContacts]);
 
@@ -281,13 +285,15 @@ function App() {
                   <Link to={data.Id}><Contact profilePic={data.profileImg} name={data.name} about={data.about} /></Link>
                 </React.Fragment>
               ))
-              : <div style={{
-                textAlign: 'center',
-                fontSize: 'xx-large',
-                margin: '29px 0'
-              }}>
-                <Link style={{color: '#4242d3'}} to={'/addUser'}>Add Contacts</Link> to view them here
-              </div>
+              :
+              signIn ?
+                <div className='simple-watermark'>
+                  <Link style={{ color: '#4242d3' }} to={'/addUser'}>Add Contacts</Link> to view them here
+                </div>
+                :
+                <div className='simple-watermark'>
+                  <Link style={{ color: '#4242d3' }} to={'/signIn'}>Sign In </Link>to View your Contacts here
+                </div>
             }
           </div>
         } />
@@ -298,10 +304,10 @@ function App() {
           <SignIn isButtonDisabled={isButtonDisabled} purpose={'Sign up'} account={createAccount} />
         } />
         <Route exact path="/addUser" element={
-          <DialogueBox addContact={addContact} />
+          <DialogueBox signIn={signIn} addContact={addContact} />
         } />
         <Route exact path="/sharecontact" element={
-          <ShareContact userId={userId} />
+          <ShareContact signIn={signIn} userId={userId} />
         } />
 
         {contactsData && contactsData.map((data, index) => (

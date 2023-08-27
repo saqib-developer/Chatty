@@ -1,16 +1,24 @@
 import React from 'react';
 // import QRCode from 'qrcode.react';
 import './ShareContact.css'
+import {Link} from 'react-router-dom'
 
 export default function ShareContact(props) {
     console.log(props.userId)
     return (
-        <div className='shareContact'>
-            <div className="qr-container">
-                <h2>Scan the QR code</h2>
+        <div className='share-contact' >
+            {props.signIn?
+            <div className="box" title='Copy the Id and paste in the Add Contact page to add that contact'>
+                <h2>Your Id</h2>
+                <br />
                 {/* <QRCode value={props.userId} /> */}
-                <p>Your Id: {props.userId}</p>
+                <p>{props.userId}</p>
             </div>
+            :
+            <div className='simple-watermark'>
+                  <span><Link style={{ color: '#4242d3' }} to={'/signIn'}>Sign In </Link>to View your Contacts here</span>
+                </div>
+            }
         </div>
     )
 }

@@ -75,6 +75,16 @@
     /* Thumb color on hover */
 }
 
+.simple-watermark {
+    height: 100%;
+    min-height: 250px;
+    font-size: 4em;
+    color: #999999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .watermark {
     height: 100%;
     min-height: 312px;
@@ -87,6 +97,7 @@
 
 .watermark span {
     transform: rotateZ(339deg);
+    z-index: -1;
 }
 
 .mine {
@@ -135,14 +146,21 @@
     border-radius: 26px;
     background: #464646;
     color: white;
+    font-family: cursive;
     padding: 0 14px;
+    font-size: 1.15em;
 }
 
 .chat-input button {
     border: 1.5px solid grey;
     background: #3939c5;
-    font-size: medium;
+    font-size: large;
     padding: 6px 13px;
     margin: 0px 6px;
     border-radius: 29px;
+    transition: all 0.8s;
+}
+
+.chat-input button:hover {
+    background-color: #0084ff;
 }
