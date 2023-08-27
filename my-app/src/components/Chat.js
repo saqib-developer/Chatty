@@ -31,6 +31,7 @@ export default function Chat(props) {
         // Scroll to the bottom when messages update
         if (chatsRef.current) {
             chatsRef.current.scrollTop = chatsRef.current.scrollHeight;
+            window.scrollTo(0, document.documentElement.scrollHeight);
         }
     }, [messages]);
 
@@ -75,7 +76,7 @@ export default function Chat(props) {
                         )) : <div className='watermark'><span>Break The Ice</span></div>}
                 </div>
                 <form onSubmit={manageMsg} className="chat-input">
-                    <input required type="text" id='msg' autocomplete="off"/>
+                    <input required type="text" id='msg' autoComplete="off"/>
                     <button type="submit">Send</button>
                 </form>
             </div>

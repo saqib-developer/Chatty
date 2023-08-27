@@ -45,22 +45,32 @@ export default function SignIn(props) {
                                 {imgSrc ? <img src={imgSrc} alt="" /> : <img src="img/default-profile-img.png" alt="" />}
                             </label>
                             <input required onChange={selectImage} type="file" accept='image/*' id='select-file' />
-                            <b><label htmlFor="loginname">Name:</label></b>
-                            <input id='loginname' required type="text" />
+                            <span>
+                                <b><label htmlFor="loginname">Name:</label></b>
+                                <br />
+                                <input id='loginname' required type="text" />
+                            </span>
                             <br />
-                            <b><label htmlFor="about">About:</label></b>
-                            <input id='about' required type="text" />
+                            <span>
+                                <b><label htmlFor="about">About:</label></b>
+                                <br />
+                                <input id='about' required type="text" />
+                            </span>
                             <br />
                         </>
                 }
+                <span>
 
-                <b><label htmlFor="email">Email:</label></b>
-                <input id='loginemail' required autoComplete='username' type="email" />
+                    <b><label htmlFor="email">Email:</label></b>
+                    <br />
+                    <input id='loginemail' required autoComplete='username' type="email" />
+                </span>
                 <br />
-
-                <b><label htmlFor="password">Password:</label></b>
-                <input id='loginpassword' required autoComplete='current-password' type="password" />
-
+                <span>
+                    <b><label htmlFor="password">Password:</label></b>
+                    <br />
+                    <input id='loginpassword' required autoComplete='current-password' type="password" />
+                </span>
                 <span style={{ color: 'red' }} id="showError" className='error-display'></span>
 
                 <button id='submitbtn' disabled={props.isButtonDisabled} type='submit'>Continue</button>

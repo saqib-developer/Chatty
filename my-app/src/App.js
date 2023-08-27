@@ -206,7 +206,7 @@ function App() {
         fetchContacts(); // Fetch contacts when savedContacts change
       }
     } catch (error) {
-      console.log('Error: ' + error)
+      console.error('Error: ' + error)
     }
   }, [db, savedContacts]);
 
@@ -248,7 +248,7 @@ function App() {
       } else {
         showError('addUserId', 'error-display', 'There is no Contact with that Id')
         setAddUserButtonDisabled(false)
-        console.log('Data does not exist at the specified path');
+        console.log('There is no Contact with that Id');
         document.getElementById('addUserId').style.border = '1.5px solid red';
         setTimeout(() => {
           document.getElementById('addUserId').style.border = '1.5px solid #404040';
@@ -295,11 +295,11 @@ function App() {
               :
               signIn ?
                 <div className='simple-watermark'>
-                  <Link style={{ color: '#4242d3' }} to={'/addUser'}>Add Contacts</Link> to view them here
+                  <span>  <Link style={{ color: '#4242d3' }} to={'/addUser'}>Add Contacts</Link> to view them here</span>
                 </div>
                 :
                 <div className='simple-watermark'>
-                  <Link style={{ color: '#4242d3' }} to={'/signIn'}>Sign In </Link>to View your Contacts here
+                  <span><Link style={{ color: '#4242d3' }} to={'/signIn'}>Sign in </Link>to View your Contacts here</span>
                 </div>
             }
           </div>

@@ -1,3 +1,9 @@
+@media (max-width: 426px) {
+    .box {
+        padding: 15px 5px !important;
+    }
+}
+
 .share-contact {
     background-color: #0d2b3d;
     height: 77.68%;

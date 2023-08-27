@@ -28,7 +28,7 @@ export default function DialogueBox(props) {
         </form>
         :
         <div className='simple-watermark'>
-          <span><Link style={{ color: '#4242d3' }} to={'/signIn'}>Sign In </Link>to View your Contacts here</span>
+          <span><Link style={{ color: '#4242d3' }} to={'/signIn'}>Sign In </Link>to Add new Contacts</span>
         </div>
       }
     </div>

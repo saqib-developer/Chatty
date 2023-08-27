@@ -16,7 +16,7 @@ export default function ShareContact(props) {
             </div>
             :
             <div className='simple-watermark'>
-                  <span><Link style={{ color: '#4242d3' }} to={'/signIn'}>Sign In </Link>to View your Contacts here</span>
+                  <span><Link style={{ color: '#4242d3' }} to={'/signIn'}>Sign In </Link>to Share your Contact</span>
                 </div>
             }
         </div>
