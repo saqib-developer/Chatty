@@ -165,7 +165,7 @@ function App() {
         setProfilePic(userVal.profileImg);
         setName(userVal.name);
         setAbout(userVal.about);
-        setSavedContacts(userVal.contacts.userId);
+        setSavedContacts(Object.keys(userVal.contacts));
       }
     } catch (error) {
       console.error(error);
@@ -223,11 +223,13 @@ function App() {
     const newContact = document.getElementById('addUserId').value;
 
     try {
+      const snapshot = await get(databaseRef(db, 'users/' + newContact));
+
       if (newContact === userId) {
+        
         throw new Error("You cannot add yourself as a contact.");
       }
 
-      const snapshot = await get(databaseRef(db, 'users/' + newContact));
       if (snapshot.exists()) {
         const existingContactsSnapshot = await get(databaseRef(db, 'users/' + userId + '/contacts'));
         const existingContacts = existingContactsSnapshot.val() || {};
@@ -253,6 +255,7 @@ function App() {
       console.error('Error while adding contact:', error);
     }
   };
+
 
 
 
