@@ -49,8 +49,8 @@
 }
 
 .reciever-profilePic {
-    width: 150px;
-    height: 150px;
+    width: 170px;
+    height: 170px;
     overflow: hidden;
     border-radius: 100%;
     display: flex;
@@ -65,7 +65,7 @@
 }
 
 .reciever-name {
-    font-size: 3em;
+    font-size: 2.5em;
     font-weight: bolder;
     color: #ececec;
     margin-bottom: 5px;
