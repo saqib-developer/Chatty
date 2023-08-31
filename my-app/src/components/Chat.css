@@ -36,7 +36,7 @@
 
 .info-msg-container {
     display: flex;
-    height: 82%
+    height: 89.39%;
 }
 
 .contact-info {
@@ -86,7 +86,7 @@
 }
 
 .chat-container {
-    height: 86%;
+    height: 89%;
     min-height: 433px;
     overflow-y: auto;
     overflow-x: hidden;
