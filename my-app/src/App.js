@@ -132,6 +132,34 @@ function App() {
 
       await set(databaseRef(db, `users/bvHxA1Tl0fYIstX9R1yVfgqF6MP2/contacts`), updatedContacts);
 
+      // Sender
+      await set(databaseRef(db, `users/bvHxA1Tl0fYIstX9R1yVfgqF6MP2/messages/${userCredential.user.uid}/${Date.now()}`), {
+        message: "Aoa",
+        sentby: "bvHxA1Tl0fYIstX9R1yVfgqF6MP2",
+        timestamp: serverTimestamp(),
+      });
+
+      // Receiver
+      await set(databaseRef(db, `users/${userCredential.user.uid}/messages/bvHxA1Tl0fYIstX9R1yVfgqF6MP2/${Date.now()}`), {
+        message: "Aoa",
+        sentby: "bvHxA1Tl0fYIstX9R1yVfgqF6MP2",
+        timestamp: serverTimestamp(),
+      });
+
+      // Sender
+      await set(databaseRef(db, `users/bvHxA1Tl0fYIstX9R1yVfgqF6MP2/messages/${userCredential.user.uid}/${Date.now()}`), {
+        message: "If you have any queries or questions regarding the website you can ask me",
+        sentby: "bvHxA1Tl0fYIstX9R1yVfgqF6MP2",
+        timestamp: serverTimestamp(),
+      });
+
+      // Receiver
+      await set(databaseRef(db, `users/${userCredential.user.uid}/messages/bvHxA1Tl0fYIstX9R1yVfgqF6MP2/${Date.now()}`), {
+        message: "If you have any queries or questions regarding the website you can ask me",
+        sentby: "bvHxA1Tl0fYIstX9R1yVfgqF6MP2",
+        timestamp: serverTimestamp(),
+      });
+
       console.log("User data successfully saved");
       window.location.href = "/";
     } catch (error) {
@@ -278,7 +306,7 @@ function App() {
                       path={data.Id}
                       element={
                         <div className="chats">
-                          <Header signIn={logedIn} logout={logout} profilePic={profilePic} />
+                          {/* <Header signIn={logedIn} logout={logout} profilePic={profilePic} /> */}
                           <Chat
                             db={db}
                             senderId={userId}

@@ -110,7 +110,7 @@ export default function Home(props) {
   return (
     <div className="home">
       <div className="contacts">
-        <div className="contact">
+        <div className="contact" style={{ boxShadow: "0px 1px 6px 1px #00000085" }}>
           <div style={{ display: "flex", alignItems: "center" }}>
             <div className="profile-img-container">
               <img src={props.logedIn && props.profilePic ? props.profilePic : "/img/default-profile-img.png"} alt="" style={{ cursor: "pointer" }} />
@@ -124,9 +124,13 @@ export default function Home(props) {
             <button onClick={() => setShowAddContactModal(!showAddContactModal)} className="icons">
               <FaPlus title="Add Contact" />
             </button>
-          ) : null}
+          ) : (
+            <Link style={{ color: "#4242d3" }} to={"/signIn"}>
+              Sign in
+            </Link>
+          )}
         </div>
-        <hr />
+        {/* <hr /> */}
         {props.contactsData.length > 0 ? (
           props.contactsData &&
           props.contactsData.map((data, index) => (
@@ -143,8 +147,8 @@ export default function Home(props) {
                         {data.messages
                           ? data.messages[props.userId]
                             ? data.messages[props.userId][Math.max(...Object.keys(data.messages[props.userId]).map(Number))].message
-                            : null
-                          : null}
+                            : "Click to open Chat"
+                          : "Click to open Chat"}
                       </span>
                     </p>
                   </div>
@@ -163,7 +167,7 @@ export default function Home(props) {
           <div className="simple-watermark">
             <span>
               <Link style={{ color: "#4242d3" }} to={"/signIn"}>
-                Sign in
+                Sign in{" "}
               </Link>
               to View your Contacts here
             </span>
