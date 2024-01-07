@@ -51,7 +51,7 @@ export default function Home(props) {
         document.getElementById("addUserIdOkbtn").style.cursor = "pointer";
       }
     } catch (error) {
-      console.error(error);
+      // console.error(error);
     }
   }, [props.addUserButtonDisabled]);
   const addContact = async (event) => {
@@ -81,7 +81,16 @@ export default function Home(props) {
         const updatedContacts = { ...existingContacts, [newContact]: true };
         await set(databaseRef(props.db, `users/${props.userId}/contacts`), updatedContacts);
 
+        //add the contcact ot the other user
+        const otherexistingContactsSnapshot = await get(databaseRef(props.db, `users/${newContact}/contacts`));
+        const otherexistingContacts = otherexistingContactsSnapshot.val() || {};
+
+        const otherupdatedContacts = { ...otherexistingContacts, [props.userId]: true };
+        await set(databaseRef(props.db, `users/${newContact}/contacts`), otherupdatedContacts);
+
         console.log("Contact added successfully");
+        window.location.href = "/";
+
         setShowAddContactModal(false);
       } else {
         props.showError("addUserId", "error-display", "There is no contact with that ID.");

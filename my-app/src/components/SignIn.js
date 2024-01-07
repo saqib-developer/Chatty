@@ -44,7 +44,7 @@ export default function SignIn(props) {
             <label htmlFor="select-file" className="file">
               {imgSrc ? <img src={imgSrc} alt="" /> : <img src="img/default-profile-img.png" alt="" />}
             </label>
-            <input required onChange={selectImage} type="file" accept="image/*" id="select-file" />
+            <input onChange={selectImage} type="file" accept="image/*" id="select-file" />
             <span>
               <b>
                 <label htmlFor="loginname">Name:</label>

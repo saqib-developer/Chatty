@@ -50,7 +50,6 @@
 
 .contact-detail {
   margin-left: 18px;
-  width: 85%;
 }
 
 .profile-img-container {
@@ -61,6 +60,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 0 4px 1px #0000003b;
 }
 
 .profile-img-container img {

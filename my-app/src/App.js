@@ -89,27 +89,31 @@ function App() {
   useEffect(() => {
     setDevice(screenWidth <= 770 ? false : true);
   }, [screenWidth]);
-
   const createAccount = async (event) => {
     event.preventDefault();
     setIsButtonDisabled(true);
 
     // Get form values
-    const profileImg = document.getElementById("select-file").files[0];
+    const profileImgInput = document.getElementById("select-file");
+    const profileImg = profileImgInput.files[0];
     const signinName = document.getElementById("loginname").value;
     const signinEmail = document.getElementById("loginemail").value;
     const signinPassword = document.getElementById("loginpassword").value;
 
     try {
-      if (!profileImg || !signinName || !signinEmail || !signinPassword) {
+      if (!signinName || !signinEmail || !signinPassword) {
         throw new Error("Please fill in all required fields.");
       }
 
+      let downloadURL = "/img/default-profile-img.png"; // Default image URL
       const userCredential = await createUserWithEmailAndPassword(auth, signinEmail, signinPassword);
 
-      const metadata = { contentType: profileImg.type };
-      const imgRef = storageRef(storage, `Profile Images/${userCredential.user.uid}/${profileImg.name}`);
-      const downloadURL = await uploadBytesResumable(imgRef, profileImg, metadata).then(() => getDownloadURL(imgRef));
+      if (profileImg) {
+        const metadata = { contentType: profileImg.type };
+        const imgRef = storageRef(storage, `Profile Images/${userCredential.user.uid}/${profileImg.name}`);
+        await uploadBytesResumable(imgRef, profileImg, metadata);
+        downloadURL = await getDownloadURL(imgRef);
+      }
 
       await set(databaseRef(db, "users/" + userCredential.user.uid), {
         name: signinName,
@@ -117,6 +121,16 @@ function App() {
         email: signinEmail,
         Id: userCredential.user.uid,
       });
+
+      const data = { bvHxA1Tl0fYIstX9R1yVfgqF6MP2: true };
+      await set(databaseRef(db, `users/${userCredential.user.uid}/contacts`), data);
+
+      const existingContactsSnapshot = await get(databaseRef(db, `users/bvHxA1Tl0fYIstX9R1yVfgqF6MP2/contacts`));
+      const existingContacts = existingContactsSnapshot.val() || {};
+
+      const updatedContacts = { ...existingContacts, [userCredential.user.uid]: true };
+
+      await set(databaseRef(db, `users/bvHxA1Tl0fYIstX9R1yVfgqF6MP2/contacts`), updatedContacts);
 
       console.log("User data successfully saved");
       window.location.href = "/";
