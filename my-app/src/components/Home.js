@@ -111,14 +111,15 @@ export default function Home(props) {
     <div className="home">
       <div className="contacts">
         <div className="contact">
-          <div className="profile-img-container">
-            <img src={props.logedIn && props.profilePic ? props.profilePic : "/img/default-profile-img.png"} alt="" style={{ cursor: "pointer" }} />
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <div className="profile-img-container">
+              <img src={props.logedIn && props.profilePic ? props.profilePic : "/img/default-profile-img.png"} alt="" style={{ cursor: "pointer" }} />
+            </div>
+            <div className="contact-detail">
+              <p className="greeting-text">{getGreeting()}</p>
+              <p className="name-text">{props.name}</p>
+            </div>
           </div>
-          <div className="contact-detail">
-            <p className="greeting-text">{getGreeting()}</p>
-            <p className="name-text">{props.name}</p>
-          </div>
-
           {props.logedIn ? (
             <button onClick={() => setShowAddContactModal(!showAddContactModal)} className="icons">
               <FaPlus title="Add Contact" />
@@ -131,18 +132,30 @@ export default function Home(props) {
           props.contactsData.map((data, index) => (
             <React.Fragment key={index}>
               <Link className="contact" id={data.Id} to={data.Id}>
-                <div className="profile-img-container">
-                  <img src={data.profileImg} alt="" />
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <div className="profile-img-container">
+                    <img src={data.profileImg} alt="" />
+                  </div>
+                  <div className="contact-detail">
+                    <p className="name-text">{data.name}</p>
+                    <p style={{ display: "flex", justifyContent: "space-between", fontSize: "0.8em", color: "#bbbbbb" }}>
+                      <span>
+                        {data.messages
+                          ? data.messages[props.userId]
+                            ? data.messages[props.userId][Math.max(...Object.keys(data.messages[props.userId]).map(Number))].message
+                            : null
+                          : null}
+                      </span>
+                    </p>
+                  </div>
                 </div>
-                <div className="contact-detail">
-                  <p className="name-text">{data.name}</p>
-                  <p style={{ display: "flex", justifyContent: "space-between", fontSize: "0.8em", color: "#bbbbbb" }}>
-                    <span>
-                      {data.messages ? data.messages[props.userId][Math.max(...Object.keys(data.messages[props.userId]).map(Number))].message : null}
-                    </span>
-                    <span>{data.messages ? formatTimestamp(Math.max(...Object.keys(data.messages[props.userId]).map(Number))) : null}</span>
-                  </p>
-                </div>
+                <span style={{ fontSize: "0.8em", color: "#bbbbbb" }}>
+                  {data.messages
+                    ? data.messages[props.userId]
+                      ? formatTimestamp(Math.max(...Object.keys(data.messages[props.userId]).map(Number)))
+                      : null
+                    : null}
+                </span>
               </Link>
             </React.Fragment>
           ))
