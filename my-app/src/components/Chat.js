@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./Chat.css";
 import { ref as databaseRef, onValue } from "firebase/database";
-import { FaP, FaPaperPlane } from "react-icons/fa6";
-import Header from "./Header";
+import { FaPaperPlane } from "react-icons/fa6";
 
 export default function Chat(props) {
   const [messages, setMessages] = useState([]);

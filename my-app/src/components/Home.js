@@ -1,83 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Link, Route, Routes } from "react-router-dom";
-import { getDatabase, ref as databaseRef, get, set, serverTimestamp } from "firebase/database";
+import { ref as databaseRef, get, set } from "firebase/database";
 import "./Home.css";
 import Chat from "./Chat";
 import { FaCircleQuestion, FaCopy, FaPlus, FaXmark } from "react-icons/fa6";
 import Header from "./Header";
 
 export default function Home(props) {
-  const [contactsData, setContactsData] = useState([]);
-  const [showChatsOf, setShowChatsOf] = useState();
-  const [activeId, setActiveId] = useState();
   const [showAddContactModal, setShowAddContactModal] = useState(false);
   const [addUserButtonDisabled, setAddUserButtonDisabled] = useState(false);
   const [newContact, setNewContact] = useState();
-
-  const [screenWidth, setScreenWidth] = useState(window.innerWidth);
-  const [device, setDevice] = useState(true); //true === large screen && false === small screen
-
-  const handleResize = () => {
-    setScreenWidth(window.innerWidth);
-  };
-
-  useEffect(() => {
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
-
-  useEffect(() => {
-    setDevice(screenWidth <= 770 ? false : true);
-  }, [screenWidth]);
-
-  console.log(screenWidth);
-
-  useEffect(() => {
-    const fetchContacts = async () => {
-      try {
-        const fetchedContacts = [];
-
-        for (const userId of props.savedContacts) {
-          const snapshot = await get(databaseRef(props.db, "users/" + userId));
-          if (snapshot.exists()) {
-            const userData = snapshot.val();
-            fetchedContacts.push(userData); // Add the user data to the array
-          }
-        }
-
-        setContactsData(fetchedContacts); // Set the fetched contacts to the state
-      } catch (error) {
-        console.error("Error fetching contacts:", error);
-      }
-    };
-
-    try {
-      if (props.savedContacts.length > 0) {
-        fetchContacts(); // Fetch contacts when props.savedContacts change
-      }
-    } catch (error) {
-      console.error("Error: " + error);
-    }
-  }, [props.db, props.savedContacts]);
-
-  const sendMsg = async (receiverId, msg) => {
-    // Sender
-    await set(databaseRef(props.db, `users/${props.userId}/messages/${receiverId}/${Date.now()}`), {
-      message: msg,
-      sentby: props.userId,
-      timestamp: serverTimestamp(),
-    });
-
-    // Receiver
-    await set(databaseRef(props.db, `users/${receiverId}/messages/${props.userId}/${Date.now()}`), {
-      message: msg,
-      sentby: props.userId,
-      timestamp: serverTimestamp(),
-    });
-  };
 
   function getGreeting() {
     const currentHour = new Date().getHours();
@@ -109,19 +41,6 @@ export default function Home(props) {
     }
   }
 
-  useEffect(() => {
-    // Remove 'active' class from all elements with class 'contact'
-    const contactElements = document.getElementsByClassName("contact");
-    for (const element of contactElements) {
-      element.classList.remove("active");
-    }
-
-    // Add 'active' class to the element with the specified ID
-    const activeElement = document.getElementById(activeId);
-    if (activeElement) {
-      activeElement.classList.add("active");
-    }
-  }, [activeId]);
   useEffect(() => {
     try {
       if (props.addUserButtonDisabled) {
@@ -190,14 +109,17 @@ export default function Home(props) {
             <p className="greeting-text">{getGreeting()}</p>
             <p className="name-text">{props.name}</p>
           </div>
-          <button onClick={() => setShowAddContactModal(!showAddContactModal)} className="icons">
-            <FaPlus title="Add Contact" />
-          </button>
+
+          {props.logedIn ? (
+            <button onClick={() => setShowAddContactModal(!showAddContactModal)} className="icons">
+              <FaPlus title="Add Contact" />
+            </button>
+          ) : null}
         </div>
         <hr />
-        {contactsData.length > 0 ? (
-          contactsData &&
-          contactsData.map((data, index) => (
+        {props.contactsData.length > 0 ? (
+          props.contactsData &&
+          props.contactsData.map((data, index) => (
             <React.Fragment key={index}>
               <Link className="contact" id={data.Id} to={data.Id}>
                 <div className="profile-img-container">
@@ -226,33 +148,34 @@ export default function Home(props) {
           </div>
         )}
       </div>
-
-      <div className="chats">
-        <Header signIn={props.logedIn} logout={props.logout} profilePic={props.profilePic} />
-        <Routes>
-          {contactsData &&
-            contactsData.map((data, index) => (
-              <React.Fragment key={index}>
-                <Route
-                  exact
-                  path={data.Id}
-                  element={
-                    <Chat
-                      db={props.db}
-                      senderId={props.userId}
-                      receiverId={data.Id}
-                      profilePic={data.profileImg}
-                      name={data.name}
-                      sendMsg={sendMsg}
-                      setActiveId={setActiveId}
-                      logedIn={props.logedIn}
-                    />
-                  }
-                />
-              </React.Fragment>
-            ))}
-        </Routes>
-      </div>
+      {props.device ? (
+        <div className="chats">
+          <Header signIn={props.logedIn} logout={props.logout} profilePic={props.profilePic} />
+          <Routes>
+            {props.contactsData &&
+              props.contactsData.map((data, index) => (
+                <React.Fragment key={index}>
+                  <Route
+                    exact
+                    path={data.Id}
+                    element={
+                      <Chat
+                        db={props.db}
+                        senderId={props.userId}
+                        receiverId={data.Id}
+                        profilePic={data.profileImg}
+                        name={data.name}
+                        sendMsg={props.sendMsg}
+                        setActiveId={props.setActiveId}
+                        logedIn={props.logedIn}
+                      />
+                    }
+                  />
+                </React.Fragment>
+              ))}
+          </Routes>
+        </div>
+      ) : null}
       {showAddContactModal ? (
         <div className="modal-container">
           <form onSubmit={addContact} className="modal">

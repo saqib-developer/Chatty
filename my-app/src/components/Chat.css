@@ -22,7 +22,7 @@
 
 .chats {
   height: 100vh;
-  width: 65%;
+  flex: 2;
   overflow-y: auto;
 }
 

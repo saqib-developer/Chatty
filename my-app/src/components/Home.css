@@ -23,8 +23,7 @@
   flex-direction: column;
   min-height: 100vh;
   min-width: 300px;
-  width: 35%;
-  max-width: 700px;
+  flex: 1;
 }
 
 .contact {
@@ -101,7 +100,7 @@
   justify-content: center;
   align-items: center;
   border-radius: 10px;
-  padding: 14px 54px;
+  padding: 8px 2px;
   box-shadow: 0 0 6px 1px #00000063;
 }
 
@@ -113,13 +112,13 @@
 .question-mark-icon * {
   color: grey;
   cursor: pointer;
-  margin-left: 3px  ;
+  margin-left: 3px;
 }
 
 .modal input {
   box-shadow: 0 0 11px 1px #00000054;
   padding: 6px;
-  width: 313px;
+  width: 290px;
   height: 16px;
   border-radius: 100px;
 }
