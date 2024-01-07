@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
@@ -8,6 +9,7 @@ import { initializeApp } from "firebase/app";
 import { AuthErrorCodes, getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "firebase/auth";
 import { getDatabase, ref as databaseRef, get, set, serverTimestamp } from "firebase/database";
 import { getStorage, ref as storageRef, getDownloadURL, uploadBytesResumable } from "firebase/storage";
+import { getAnalytics } from "firebase/analytics";
 import Home from "./components/Home";
 import Chat from "./components/Chat";
 
@@ -28,9 +30,11 @@ const firebaseConfig = {
 
 function App() {
   const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
   const auth = getAuth(app);
   const db = getDatabase(app);
   const storage = getStorage(app);
+
   const [logedIn, setLogedIn] = useState(false);
   const [userId, setUserId] = useState(null);
   const [profilePic, setProfilePic] = useState(null);
