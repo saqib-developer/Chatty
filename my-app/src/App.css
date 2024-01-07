@@ -1,5 +1,30 @@
-.centercenter{
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.app {
+  min-height: 100%;
+}
+
+.centercenter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+hr {
+  border: 1.34px solid #e9e9e9;
+}
+
+a,
+button,
+input {
+  color: white;
+  text-decoration: none;
+  border: none;
+}
+
+a:hover,
+button:hover {
+  cursor: pointer;
+}
+
+input {
+  color: black;
 }

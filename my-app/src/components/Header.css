@@ -1,157 +1,29 @@
-@keyframes jumping {
-    0% {
-        transform: translate(48vw, 48vh) scale(1.5);
-    }
-
-    15% {
-        transform: translate(48vw, 54vh) scale(1.5);
-    }
-
-    30% {
-        transform: translate(48vw, 48vh) scale(1.5);
-    }
-
-    45% {
-        transform: translate(48vw, 54vh) scale(1.5);
-    }
-
-    60% {
-        transform: translate(48vw, 48vh) scale(1.5);
-    }
-
-    100% {
-        transform: translate(0, 0) scale(1);
-    }
-}
-
-.header {
-    width: 100%;
-    height: fit-content;
-    max-height: 150px;
-    min-height: 65px;
-    display: flex;
-    flex-direction: column;
-    background-color: #111b21;
-    transition: all 0.9s;
-}
-
-.header-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    height: 63px;
-
-}
-
-.chatty-logo-container {
-    height: inherit;
-    min-height: 88px;
-    background: transparent;
-    border-radius: 252px;
-    z-index: 3;
-    animation: jumping 5s ease-in-out 0s normal forwards;
-}
-
-.chatty-logo-container img {
-    height: 100%;
-    transition: all 0.6s;
-}
-
-.chatty-logo-container img:hover {
-    transform: scale(1.1);
-}
-
-.header-link-container {
-    height: 100%;
+.header {    background-color: white;
+    color: black;
     display: flex;
     align-items: center;
-    justify-content: space-evenly;
+    border-left: 2.8px solid #e9e9e9;
+    justify-content: end;
+    height: 78px;
 }
 
-.header-link-container a,
-.header-link-container button {
-    background-color: transparent;
-    height: inherit;
-    width: 155px;
-    font-size: 1.1em;
-    color: #5757ff;
-    font-weight: 600;
+.header button {
+  background: transparent;
+  color: red;
+  font-size: 1.1em;
+  font-weight: bold;
 }
 
-.header-link-container a span,
-.header-link-container button span {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    letter-spacing: 1.3px;
-    transition: all 0.7s;
-    text-align: center;
+.header a {
+  margin: 0 13px;
 }
 
-.header-link-container a span:hover,
-.header-link-container button span:hover {
-    transform: translateY(-7px);
+.header a img {
+  height: 85px;
+  border-radius: 200px;
+  transition: all 0.6s;
 }
 
-.header-link-container a:hover,
-.header-link-container button:hover {
-    border-bottom: 1.5px solid #5757ff;
-}
-
-.per-logo {
-    width: 65px;
-    height: 65px;
-    overflow: hidden;
-    border-radius: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 0 7px;
-}
-
-.per-logo img {
-    width: 100%;
-    height: 100%;
-}
-
-.anim {
-    width: 100vw;
-    height: 100vh;
-    position: fixed;
-    top: 0px;
-    left: 0px;
-    background-color: #1a1a3c;
-    z-index: 2;
-    animation: fadeOut 1.5s linear 3s normal forwards;
-}
-
-@keyframes fadeOut {
-    0% {
-        opacity: 1;
-    }
-
-    100% {
-        opacity: 0;
-        visibility: hidden;
-    }
-}
-
-.user-detail {
-    display: inline;
-    position: absolute;
-    margin-top: 186px;
-    margin-right: 34px;
-    background-color: rgb(0 0 0 / 20%);
-    padding: 5px;
-    border: 1px solid #ccc;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    z-index: 3;
-    width: fit-content;
-}
-
-.invisible {
-    display: none;
+.header a img:hover {
+  transform: scale(1.07);
 }

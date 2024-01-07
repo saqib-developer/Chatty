@@ -1,0 +1,162 @@
+.home {
+  display: flex;
+  min-height: 100%;
+}
+
+.icons {
+  margin-left: 8px;
+  border-radius: 100px;
+}
+
+.icons * {
+  border-radius: 100px;
+  background-color: #eeeeee;
+  color: #b9b9b9;
+  padding: 12px;
+  margin: 0 3px;
+  font-size: 1.3em;
+}
+
+.contacts {
+  background: white;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-width: 300px;
+  width: 35%;
+  max-width: 700px;
+}
+
+.contact {
+  background: transparent;
+  color: black;
+  display: flex;
+  align-items: center;
+  margin: 2px 6px;
+  padding: 9px 6px;
+  border-radius: 10px;
+  transition: all 0.4s;
+}
+
+.contact:hover {
+  background-color: #e4e4e4;
+  color: black;
+}
+
+.active {
+  background-color: #0069ff !important;
+  color: white !important;
+  box-shadow: 0 0 5px #000000a1;
+}
+
+.contact-detail {
+  margin-left: 18px;
+  width: 85%;
+}
+
+.profile-img-container {
+  overflow: hidden;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-img-container img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.name-text {
+  text-align: left;
+  font-weight: bolder;
+  font-size: 0.93em;
+}
+.greeting-text {
+  color: #bbbbbb;
+  font-size: 0.8em;
+  margin-bottom: 4px;
+}
+
+.modal-container {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  top: 0px;
+  left: 0px;
+  background-color: rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal {
+  background-color: white;
+  color: black;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+  padding: 14px 54px;
+  box-shadow: 0 0 6px 1px #00000063;
+}
+
+.question-mark-icon {
+  width: 100%;
+  text-align: right;
+}
+
+.question-mark-icon * {
+  color: grey;
+  cursor: pointer;
+  margin-left: 3px  ;
+}
+
+.modal input {
+  box-shadow: 0 0 11px 1px #00000054;
+  padding: 6px;
+  width: 313px;
+  height: 16px;
+  border-radius: 100px;
+}
+
+.copyId {
+  display: flex;
+}
+
+.copyId div {
+  color: #00000088;
+  margin: 0 10px;
+  font-size: 1em;
+  background: transparent;
+  cursor: pointer;
+}
+
+.error-display {
+  color: red;
+  min-height: 16px;
+  width: 267px;
+  margin: 6px 0;
+}
+
+.primary {
+  background: blue;
+  padding: 7px 20px;
+  border-radius: 5px;
+  margin: 0 7px;
+  margin-top: 7px;
+}
+
+.secondary {
+  border: 3px solid blue;
+  background: #0000ffa8;
+  cursor: pointer;
+  padding: 4px 13px;
+  border-radius: 5px;
+  margin: 0 7px;
+  margin-top: 7px;
+}
