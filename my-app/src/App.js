@@ -9,7 +9,6 @@ import { AuthErrorCodes, getAuth, signInWithEmailAndPassword, createUserWithEmai
 import { getDatabase, ref as databaseRef, get, set, serverTimestamp } from "firebase/database";
 import { getStorage, ref as storageRef, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import Home from "./components/Home";
-import Header from "./components/Header";
 import Chat from "./components/Chat";
 
 // TODO: Add SDKs for Firebase products that you want to use
