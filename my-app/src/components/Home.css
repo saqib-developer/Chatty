@@ -55,13 +55,14 @@
 
 .profile-img-container {
   overflow: hidden;
-  width: 60px;
   height: 60px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   box-shadow: 0 0 4px 1px #0000003b;
+  width: 7%;
+  min-width: 60px;
 }
 
 .profile-img-container img {

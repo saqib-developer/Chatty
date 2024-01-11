@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
@@ -30,6 +29,7 @@ const firebaseConfig = {
 
 function App() {
   const app = initializeApp(firebaseConfig);
+  // eslint-disable-next-line no-unused-vars
   const analytics = getAnalytics(app);
   const auth = getAuth(app);
   const db = getDatabase(app);
