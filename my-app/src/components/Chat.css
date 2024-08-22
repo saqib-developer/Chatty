@@ -35,24 +35,19 @@
 
 .chat-container::-webkit-scrollbar {
   width: 10px;
-  /* Width of the scrollbar */
 }
 
 .chat-container::-webkit-scrollbar-track {
   background: #d1d1d1;
-  /* Track color */
 }
 
 .chat-container::-webkit-scrollbar-thumb {
   background: #888;
-  /* Thumb color */
   border-radius: 5px;
-  /* Rounded corners for the thumb */
 }
 
 .chat-container::-webkit-scrollbar-thumb:hover {
   background: #555;
-  /* Thumb color on hover */
 }
 
 .simple-watermark {

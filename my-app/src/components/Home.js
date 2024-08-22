@@ -25,25 +25,21 @@ export default function Home(props) {
 
   function formatTimestamp(timestamp) {
     const currentTimestamp = Date.now();
-    const messageTimestamp = timestamp;
 
-    const timeDifferenceInHours = (currentTimestamp - messageTimestamp) / (1000 * 60 * 60);
+    const timeDifferenceInHours = (currentTimestamp - timestamp) / (1000 * 60 * 60);
 
     if (timeDifferenceInHours < 24) {
-      // Display time if within 24 hours
-      return new Date(messageTimestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+      return new Date(timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
     } else if (timeDifferenceInHours < 48) {
-      // Display 'yesterday' if within 48 hours
       return "Yesterday";
     } else {
-      // Display date if more than 48 hours
-      return new Date(messageTimestamp).toLocaleDateString();
+      return new Date(timestamp).toLocaleDateString();
     }
   }
 
   useEffect(() => {
     try {
-      if (props.addUserButtonDisabled) {
+      if (addUserButtonDisabled) {
         document.getElementById("addUserIdOkbtn").style.background = "grey";
         document.getElementById("addUserIdOkbtn").style.cursor = "no-drop";
       } else {
@@ -51,9 +47,9 @@ export default function Home(props) {
         document.getElementById("addUserIdOkbtn").style.cursor = "pointer";
       }
     } catch (error) {
-      // console.error(error);
+      console.error(error);
     }
-  }, [props.addUserButtonDisabled]);
+  }, [addUserButtonDisabled]);
   const addContact = async (event) => {
     event.preventDefault();
     setAddUserButtonDisabled(true);
@@ -62,7 +58,7 @@ export default function Home(props) {
       const snapshot = await get(databaseRef(props.db, `users/${newContact}`));
 
       if (newContact === props.userId) {
-        props.showError("addUserId", "error-display", "You cannot add your own contact.");
+        props.showError("addUserId", "error-display", "FYI You cannot add your own contact.");
         setAddUserButtonDisabled(false);
         throw new Error("You cannot add yourself as a contact.");
       }
@@ -77,11 +73,9 @@ export default function Home(props) {
           throw new Error("Contact already exists in your list.");
         }
 
-        // Update the database with the new contact list
         const updatedContacts = { ...existingContacts, [newContact]: true };
         await set(databaseRef(props.db, `users/${props.userId}/contacts`), updatedContacts);
 
-        //add the contcact ot the other user
         const otherexistingContactsSnapshot = await get(databaseRef(props.db, `users/${newContact}/contacts`));
         const otherexistingContacts = otherexistingContactsSnapshot.val() || {};
 

@@ -5,7 +5,7 @@ import { FaPaperPlane } from "react-icons/fa6";
 
 export default function Chat(props) {
   const [messages, setMessages] = useState([]);
-  const chatsRef = React.useRef(null); // Create a ref to hold the chats container
+  const chatsRef = React.useRef(null); // ref to hold the chats container
   props.setActiveId(props.receiverId);
 
   useEffect(() => {
@@ -25,7 +25,6 @@ export default function Chat(props) {
 
     const unsubscribe = onValue(databaseRef(props.db, `users/${props.senderId}/messages/${props.receiverId}`), updateMessages);
 
-    // Clean up the subscription when the component unmounts
     return () => unsubscribe();
   }, [props.db, props.receiverId, props.senderId]);
 

@@ -41,9 +41,9 @@ function App() {
   const [name, setName] = useState(null);
   const [savedContacts, setSavedContacts] = useState([]);
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
-
   const [contactsData, setContactsData] = useState([]);
   const [activeId, setActiveId] = useState();
+
   const showError = (borderId, spanId, error) => {
     document.getElementById(borderId).style.border = "1.5px solid red";
     document.getElementById(spanId).textContent = error;
@@ -75,7 +75,7 @@ function App() {
   };
 
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
-  const [device, setDevice] = useState(true); //true === large screen && false === small screen
+  const [device, setDevice] = useState(true); //true === large screen , false === small screen
 
   const handleResize = () => {
     setScreenWidth(window.innerWidth);
@@ -92,13 +92,12 @@ function App() {
   useEffect(() => {
     setDevice(screenWidth <= 770 ? false : true);
   }, [screenWidth]);
+
   const createAccount = async (event) => {
     event.preventDefault();
     setIsButtonDisabled(true);
 
-    // Get form values
-    const profileImgInput = document.getElementById("select-file");
-    const profileImg = profileImgInput.files[0];
+    const profileImg = document.getElementById("select-file").files[0];
     const signinName = document.getElementById("loginname").value;
     const signinEmail = document.getElementById("loginemail").value;
     const signinPassword = document.getElementById("loginpassword").value;
@@ -123,10 +122,10 @@ function App() {
         profileImg: downloadURL,
         email: signinEmail,
         Id: userCredential.user.uid,
+        contacts: {
+          bvHxA1Tl0fYIstX9R1yVfgqF6MP2: true, // where bvHxA1Tl0fYIstX9R1yVfgqF6MP2 is my uid
+        },
       });
-
-      const data = { bvHxA1Tl0fYIstX9R1yVfgqF6MP2: true };
-      await set(databaseRef(db, `users/${userCredential.user.uid}/contacts`), data);
 
       const existingContactsSnapshot = await get(databaseRef(db, `users/bvHxA1Tl0fYIstX9R1yVfgqF6MP2/contacts`));
       const existingContacts = existingContactsSnapshot.val() || {};
@@ -182,64 +181,6 @@ function App() {
     });
   };
 
-  useEffect(() => {
-    const fetchContacts = async () => {
-      try {
-        const fetchedContacts = [];
-
-        for (const userId of savedContacts) {
-          const snapshot = await get(databaseRef(db, "users/" + userId));
-          if (snapshot.exists()) {
-            const userData = snapshot.val();
-            fetchedContacts.push(userData); // Add the user data to the array
-          }
-        }
-
-        setContactsData(fetchedContacts); // Set the fetched contacts to the state
-      } catch (error) {
-        console.error("Error fetching contacts:", error);
-      }
-    };
-
-    try {
-      if (savedContacts.length > 0) {
-        fetchContacts(); // Fetch contacts when savedContacts change
-      }
-    } catch (error) {
-      console.error("Error: " + error);
-    }
-  }, [db, savedContacts]);
-
-  useEffect(() => {
-    // Remove 'active' class from all elements with class 'contact'
-    const contactElements = document.getElementsByClassName("contact");
-    for (const element of contactElements) {
-      element.classList.remove("active");
-    }
-
-    // Add 'active' class to the element with the specified ID
-    const activeElement = document.getElementById(activeId);
-    if (activeElement) {
-      activeElement.classList.add("active");
-    }
-  }, [activeId]);
-
-  const sendMsg = async (receiverId, msg) => {
-    // Sender
-    await set(databaseRef(db, `users/${userId}/messages/${receiverId}/${Date.now()}`), {
-      message: msg,
-      sentby: userId,
-      timestamp: serverTimestamp(),
-    });
-
-    // Receiver
-    await set(databaseRef(db, `users/${receiverId}/messages/${userId}/${Date.now()}`), {
-      message: msg,
-      sentby: userId,
-      timestamp: serverTimestamp(),
-    });
-  };
-
   const handleAuthenticatedUser = async (user) => {
     setUserId(user.uid);
     setLogedIn(true);
@@ -269,6 +210,62 @@ function App() {
     monitorAuthState();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    const fetchContacts = async () => {
+      try {
+        const fetchedContacts = [];
+
+        for (const userId of savedContacts) {
+          const snapshot = await get(databaseRef(db, "users/" + userId));
+          if (snapshot.exists()) {
+            const userData = snapshot.val();
+            fetchedContacts.push(userData);
+          }
+        }
+
+        setContactsData(fetchedContacts);
+      } catch (error) {
+        console.error("Error fetching contacts:", error);
+      }
+    };
+
+    try {
+      if (savedContacts.length > 0) {
+        fetchContacts();
+      }
+    } catch (error) {
+      console.error("Error: " + error);
+    }
+  }, [db, savedContacts]);
+
+  useEffect(() => {
+    const contactElements = document.getElementsByClassName("contact");
+    for (const element of contactElements) {
+      element.classList.remove("active");
+    }
+
+    const activeElement = document.getElementById(activeId);
+    if (activeElement) {
+      activeElement.classList.add("active");
+    }
+  }, [activeId]);
+
+  const sendMsg = async (receiverId, msg) => {
+    // Sender
+    await set(databaseRef(db, `users/${userId}/messages/${receiverId}/${Date.now()}`), {
+      message: msg,
+      sentby: userId,
+      timestamp: serverTimestamp(),
+    });
+
+    // Receiver
+    await set(databaseRef(db, `users/${receiverId}/messages/${userId}/${Date.now()}`), {
+      message: msg,
+      sentby: userId,
+      timestamp: serverTimestamp(),
+    });
+  };
 
   const logout = async () => {
     await signOut(auth);
@@ -305,7 +302,6 @@ function App() {
                 contactsData.map((data, index) => (
                   <React.Fragment key={index}>
                     <Route
-                      exact
                       path={data.Id}
                       element={
                         <div className="chats">
@@ -327,8 +323,8 @@ function App() {
                 ))}
             </>
           )}
-          <Route exact path="/signIn" element={<SignIn isButtonDisabled={isButtonDisabled} purpose={"Sign in"} account={loginEmailPassword} />} />
-          <Route exact path="/signUp" element={<SignIn isButtonDisabled={isButtonDisabled} purpose={"Sign up"} account={createAccount} />} />
+          <Route path="/signIn" element={<SignIn isButtonDisabled={isButtonDisabled} purpose={"Sign in"} account={loginEmailPassword} />} />
+          <Route path="/signUp" element={<SignIn isButtonDisabled={isButtonDisabled} purpose={"Sign up"} account={createAccount} />} />
         </Routes>
       </div>
     </Router>
