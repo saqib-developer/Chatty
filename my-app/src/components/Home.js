@@ -9,7 +9,9 @@ import Header from "./Header";
 export default function Home(props) {
   const [showAddContactModal, setShowAddContactModal] = useState(false);
   const [addUserButtonDisabled, setAddUserButtonDisabled] = useState(false);
-  const [newContact, setNewContact] = useState();
+  const [newContact, setNewContact] = useState("");
+  const [contactToAdd, setContactToAdd] = useState(null);
+  const [confirmingContact, setConfirmingContact] = useState(false);
 
   function getGreeting() {
     const currentHour = new Date().getHours();
@@ -25,7 +27,6 @@ export default function Home(props) {
 
   function formatTimestamp(timestamp) {
     const currentTimestamp = Date.now();
-
     const timeDifferenceInHours = (currentTimestamp - timestamp) / (1000 * 60 * 60);
 
     if (timeDifferenceInHours < 24) {
@@ -40,16 +41,17 @@ export default function Home(props) {
   useEffect(() => {
     try {
       if (addUserButtonDisabled) {
-        document.getElementById("addUserIdOkbtn").style.background = "grey";
-        document.getElementById("addUserIdOkbtn").style.cursor = "no-drop";
+        document.getElementById("addUserIdOkbtn")?.style?.setProperty("background", "grey");
+        document.getElementById("addUserIdOkbtn")?.style?.setProperty("cursor", "no-drop");
       } else {
-        document.getElementById("addUserIdOkbtn").style.background = "blue";
-        document.getElementById("addUserIdOkbtn").style.cursor = "pointer";
+        document.getElementById("addUserIdOkbtn")?.style?.setProperty("background", "blue");
+        document.getElementById("addUserIdOkbtn")?.style?.setProperty("cursor", "pointer");
       }
     } catch (error) {
       console.error(error);
     }
   }, [addUserButtonDisabled]);
+
   const addContact = async (event) => {
     event.preventDefault();
     setAddUserButtonDisabled(true);
@@ -64,41 +66,54 @@ export default function Home(props) {
       }
 
       if (snapshot.exists()) {
-        const existingContactsSnapshot = await get(databaseRef(props.db, `users/${props.userId}/contacts`));
-        const existingContacts = existingContactsSnapshot.val() || {};
-
-        if (Object.keys(existingContacts).includes(newContact)) {
-          props.showError("addUserId", "error-display", "Contact already exists in your list.");
-          setAddUserButtonDisabled(false);
-          throw new Error("Contact already exists in your list.");
-        }
-
-        const updatedContacts = { ...existingContacts, [newContact]: true };
-        await set(databaseRef(props.db, `users/${props.userId}/contacts`), updatedContacts);
-
-        const otherexistingContactsSnapshot = await get(databaseRef(props.db, `users/${newContact}/contacts`));
-        const otherexistingContacts = otherexistingContactsSnapshot.val() || {};
-
-        const otherupdatedContacts = { ...otherexistingContacts, [props.userId]: true };
-        await set(databaseRef(props.db, `users/${newContact}/contacts`), otherupdatedContacts);
-
-        console.log("Contact added successfully");
-        window.location.href = "/";
-
-        setShowAddContactModal(false);
+        const userData = snapshot.val();
+        setContactToAdd({
+          id: newContact,
+          profilePic: userData.profilePic,
+          email: userData.email,
+        });
+        setConfirmingContact(true);
       } else {
         props.showError("addUserId", "error-display", "There is no contact with that ID.");
-        setAddUserButtonDisabled(false);
-        console.log("There is no contact with that ID");
         document.getElementById("addUserId").style.border = "1.5px solid red";
         setTimeout(() => {
           document.getElementById("addUserId").style.border = "1.5px solid #404040";
         }, 3000);
       }
     } catch (error) {
-      setAddUserButtonDisabled(false);
       console.error("Error while adding contact:", error);
     }
+    setAddUserButtonDisabled(false);
+  };
+
+  const handleConfirmAddContact = async () => {
+    setAddUserButtonDisabled(true);
+    try {
+      const existingContactsSnapshot = await get(databaseRef(props.db, `users/${props.userId}/contacts`));
+      const existingContacts = existingContactsSnapshot.val() || {};
+
+      if (Object.keys(existingContacts).includes(contactToAdd.id)) {
+        props.showError("addUserId", "error-display", "Contact already exists in your list.");
+        throw new Error("Contact already exists in your list.");
+      }
+
+      const updatedContacts = { ...existingContacts, [contactToAdd.id]: true };
+      await set(databaseRef(props.db, `users/${props.userId}/contacts`), updatedContacts);
+
+      const otherexistingContactsSnapshot = await get(databaseRef(props.db, `users/${contactToAdd.id}/contacts`));
+      const otherexistingContacts = otherexistingContactsSnapshot.val() || {};
+
+      const otherupdatedContacts = { ...otherexistingContacts, [props.userId]: true };
+      await set(databaseRef(props.db, `users/${contactToAdd.id}/contacts`), otherupdatedContacts);
+
+      setShowAddContactModal(false);
+      setConfirmingContact(false);
+      setContactToAdd(null);
+      window.location.href = "/";
+    } catch (error) {
+      console.error("Error while adding contact:", error);
+    }
+    setAddUserButtonDisabled(false);
   };
 
   return (
@@ -115,7 +130,14 @@ export default function Home(props) {
             </div>
           </div>
           {props.logedIn ? (
-            <button onClick={() => setShowAddContactModal(!showAddContactModal)} className="icons">
+            <button
+              onClick={() => {
+                setShowAddContactModal(!showAddContactModal);
+                setConfirmingContact(false);
+                setContactToAdd(null);
+              }}
+              className="icons"
+            >
               <FaPlus title="Add Contact" />
             </button>
           ) : (
@@ -124,7 +146,7 @@ export default function Home(props) {
             </Link>
           )}
         </div>
-        {/* <hr /> */}
+
         {props.contactsData.length > 0 ? (
           props.contactsData &&
           props.contactsData.map((data, index) => (
@@ -148,11 +170,7 @@ export default function Home(props) {
                   </div>
                 </div>
                 <span style={{ fontSize: "0.8em", color: "#bbbbbb" }}>
-                  {data.messages
-                    ? data.messages[props.userId]
-                      ? formatTimestamp(Math.max(...Object.keys(data.messages[props.userId]).map(Number)))
-                      : null
-                    : null}
+                  {data.messages ? (data.messages[props.userId] ? formatTimestamp(Math.max(...Object.keys(data.messages[props.userId]).map(Number))) : null) : null}
                 </span>
               </Link>
             </React.Fragment>
@@ -168,6 +186,7 @@ export default function Home(props) {
           </div>
         )}
       </div>
+
       {props.device ? (
         <div className="chats">
           <Header signIn={props.logedIn} logout={props.logout} profilePic={props.profilePic} />
@@ -196,55 +215,68 @@ export default function Home(props) {
           </Routes>
         </div>
       ) : null}
-      {showAddContactModal ? (
+
+      {showAddContactModal && (
         <div className="modal-container">
-          <form onSubmit={addContact} className="modal">
-            <div className="question-mark-icon">
-              <FaCircleQuestion title={`Ask your Friend for his id and paste it in \n the input field to add him to your contacts`} />
-              <FaXmark
-                onClick={() => {
-                  setShowAddContactModal(false);
-                }}
-              />
-            </div>
-            <input
-              value={newContact}
-              onChange={(event) => setNewContact(event.target.value)}
-              required
-              autoComplete="off"
-              placeholder="Enter the User Id"
-              id="addUserId"
-              type="text"
-            />
-            <p id="error-display" className="error-display"></p>
-            <h2>Your Id</h2>
-            <div className="copyId">
-              <span>{props.userId}</span>
-              <div
-                title="Copy Id"
-                role="button"
-                tabIndex={0}
-                onClick={() => navigator.clipboard.writeText(props.userId).catch((err) => console.error("Unable to copy text", err))}
-              >
-                <FaCopy />
+          {confirmingContact ? (
+            <div className="modal">
+              <div className="question-mark-icon">
+                <FaCircleQuestion title="Confirm adding this contact" />
+                <FaXmark
+                  onClick={() => {
+                    setShowAddContactModal(false);
+                    setConfirmingContact(false);
+                    setContactToAdd(null);
+                  }}
+                />
+              </div>
+              <div className="confirmation-info">
+                <div className="profile-img-container">
+                  <img src={contactToAdd.profilePic || "/img/default-profile-img.png"} alt="Profile" />
+                </div>
+                <p>{contactToAdd.email}</p>
+              </div>
+              <div className="confirmation-buttons">
+                <button onClick={handleConfirmAddContact} disabled={addUserButtonDisabled}>
+                  Confirm
+                </button>
+                <button
+                  onClick={() => {
+                    setConfirmingContact(false);
+                    setContactToAdd(null);
+                  }}
+                >
+                  Cancel
+                </button>
               </div>
             </div>
-            <div>
-              <button className="primary" type="submit" id="addUserIdOkbtn" disabled={addUserButtonDisabled}>
-                OK
-              </button>
-              <button
-                className="secondary"
-                onClick={() => {
-                  setShowAddContactModal(false);
-                }}
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
+          ) : (
+            <form onSubmit={addContact} className="modal">
+              <div className="question-mark-icon">
+                <FaCircleQuestion title={`Ask your Friend for his id and paste it in \n the input field to add him to your contacts`} />
+                <FaXmark onClick={() => setShowAddContactModal(false)} />
+              </div>
+              <input value={newContact} onChange={(event) => setNewContact(event.target.value)} required autoComplete="off" placeholder="Enter the User Id" id="addUserId" type="text" />
+              <p id="error-display" className="error-display"></p>
+              <h2>Your Id</h2>
+              <div className="copyId">
+                <span>{props.userId}</span>
+                <div title="Copy Id" role="button" tabIndex={0} onClick={() => navigator.clipboard.writeText(props.userId).catch((err) => console.error("Unable to copy text", err))}>
+                  <FaCopy />
+                </div>
+              </div>
+              <div>
+                <button className="primary" type="submit" id="addUserIdOkbtn" disabled={addUserButtonDisabled}>
+                  OK
+                </button>
+                <button className="secondary" type="button" onClick={() => setShowAddContactModal(false)}>
+                  Cancel
+                </button>
+              </div>
+            </form>
+          )}
         </div>
-      ) : null}
+      )}
     </div>
   );
 }

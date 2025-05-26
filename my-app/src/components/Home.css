@@ -162,3 +162,106 @@
   margin: 0 7px;
   margin-top: 7px;
 }
+
+/* Modal container */
+.modal {
+  width: 320px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 20px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Top bar with question icon and close button */
+.question-mark-icon {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.question-mark-icon svg {
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  color: #555;
+}
+
+.question-mark-icon svg:hover {
+  color: #000;
+}
+
+/* Confirmation info section */
+.confirmation-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+}
+
+.profile-img-container {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid #ddd;
+}
+
+.profile-img-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Email text */
+.confirmation-info p {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #333;
+  word-break: break-all; /* handles long emails */
+}
+
+/* Buttons row */
+.confirmation-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.confirmation-buttons button {
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.confirmation-buttons button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+/* Confirm button styling */
+.confirmation-buttons button:first-child {
+  background: #007bff;
+  color: #fff;
+}
+
+.confirmation-buttons button:first-child:hover:not(:disabled) {
+  background: #0056b3;
+}
+
+/* Cancel button styling */
+.confirmation-buttons button:last-child {
+  background: transparent;
+  color: #555;
+  border: 1px solid #bbb;
+}
+
+.confirmation-buttons button:last-child:hover {
+  background: #f5f5f5;
+}
