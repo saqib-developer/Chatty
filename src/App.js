@@ -7,7 +7,6 @@ import SignIn from "./components/SignIn";
 import { initializeApp } from "firebase/app";
 import { AuthErrorCodes, getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "firebase/auth";
 import { getDatabase, ref as databaseRef, get, set, serverTimestamp } from "firebase/database";
-import { getStorage, ref as storageRef, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import { getAnalytics } from "firebase/analytics";
 import Home from "./components/Home";
 import Chat from "./components/Chat";
@@ -33,7 +32,6 @@ function App() {
   const analytics = getAnalytics(app);
   const auth = getAuth(app);
   const db = getDatabase(app);
-  const storage = getStorage(app);
   const myAuthId = process.env.NEXT_PUBLIC_MYAUTHID || "aviGI2Vuw6TBFlISMRaUvuhGlu23";
 
   const [logedIn, setLogedIn] = useState(false);
@@ -110,13 +108,6 @@ function App() {
 
       let downloadURL = "/img/default-profile-img.png"; // Default image URL
       const userCredential = await createUserWithEmailAndPassword(auth, signinEmail, signinPassword);
-
-      if (profileImg) {
-        const metadata = { contentType: profileImg.type };
-        const imgRef = storageRef(storage, `Profile Images/${userCredential.user.uid}/${profileImg.name}`);
-        await uploadBytesResumable(imgRef, profileImg, metadata);
-        downloadURL = await getDownloadURL(imgRef);
-      }
 
       await set(databaseRef(db, "users/" + userCredential.user.uid), {
         name: signinName,
