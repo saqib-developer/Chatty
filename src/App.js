@@ -34,6 +34,7 @@ function App() {
   const auth = getAuth(app);
   const db = getDatabase(app);
   const storage = getStorage(app);
+  const myAuthId = process.env.NEXT_PUBLIC_MYAUTHID || "aviGI2Vuw6TBFlISMRaUvuhGlu23";
 
   const [logedIn, setLogedIn] = useState(false);
   const [userId, setUserId] = useState(null);
@@ -123,42 +124,41 @@ function App() {
         email: signinEmail,
         Id: userCredential.user.uid,
         contacts: {
-          bvHxA1Tl0fYIstX9R1yVfgqF6MP2: true, // where bvHxA1Tl0fYIstX9R1yVfgqF6MP2 is my uid
+          [myAuthId]: true,
         },
       });
 
-      const existingContactsSnapshot = await get(databaseRef(db, `users/bvHxA1Tl0fYIstX9R1yVfgqF6MP2/contacts`));
+      const existingContactsSnapshot = await get(databaseRef(db, `users/${myAuthId}/contacts`));
       const existingContacts = existingContactsSnapshot.val() || {};
 
       const updatedContacts = { ...existingContacts, [userCredential.user.uid]: true };
 
-      await set(databaseRef(db, `users/bvHxA1Tl0fYIstX9R1yVfgqF6MP2/contacts`), updatedContacts);
-
+      await set(databaseRef(db, `users/${myAuthId}/contacts`), updatedContacts);
       // Sender
-      await set(databaseRef(db, `users/bvHxA1Tl0fYIstX9R1yVfgqF6MP2/messages/${userCredential.user.uid}/${Date.now()}`), {
+      await set(databaseRef(db, `users/${myAuthId}/messages/${userCredential.user.uid}/${Date.now()}`), {
         message: "Aoa",
-        sentby: "bvHxA1Tl0fYIstX9R1yVfgqF6MP2",
+        sentby: myAuthId,
         timestamp: serverTimestamp(),
       });
 
       // Receiver
-      await set(databaseRef(db, `users/${userCredential.user.uid}/messages/bvHxA1Tl0fYIstX9R1yVfgqF6MP2/${Date.now()}`), {
+      await set(databaseRef(db, `users/${userCredential.user.uid}/messages/${myAuthId}/${Date.now()}`), {
         message: "Aoa",
-        sentby: "bvHxA1Tl0fYIstX9R1yVfgqF6MP2",
+        sentby: myAuthId,
         timestamp: serverTimestamp(),
       });
 
       // Sender
-      await set(databaseRef(db, `users/bvHxA1Tl0fYIstX9R1yVfgqF6MP2/messages/${userCredential.user.uid}/${Date.now()}`), {
+      await set(databaseRef(db, `users/${myAuthId}/messages/${userCredential.user.uid}/${Date.now()}`), {
         message: "If you have any queries or questions regarding the website you can ask me",
-        sentby: "bvHxA1Tl0fYIstX9R1yVfgqF6MP2",
+        sentby: myAuthId,
         timestamp: serverTimestamp(),
       });
 
       // Receiver
-      await set(databaseRef(db, `users/${userCredential.user.uid}/messages/bvHxA1Tl0fYIstX9R1yVfgqF6MP2/${Date.now()}`), {
+      await set(databaseRef(db, `users/${userCredential.user.uid}/messages/${myAuthId}/${Date.now()}`), {
         message: "If you have any queries or questions regarding the website you can ask me",
-        sentby: "bvHxA1Tl0fYIstX9R1yVfgqF6MP2",
+        sentby: myAuthId,
         timestamp: serverTimestamp(),
       });
 
