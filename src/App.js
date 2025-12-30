@@ -32,7 +32,7 @@ function App() {
   const analytics = getAnalytics(app);
   const auth = getAuth(app);
   const db = getDatabase(app);
-  const myAuthId = process.env.NEXT_PUBLIC_MYAUTHID || "aviGI2Vuw6TBFlISMRaUvuhGlu23";
+  const myAuthId = process.env.NEXT_PUBLIC_MYAUTHID || "I0rwBbWVK4TalQMl0PGIXMg86Fh1";
 
   const [logedIn, setLogedIn] = useState(false);
   const [userId, setUserId] = useState(null);
